@@ -1,0 +1,17 @@
+{
+  "required": true,
+  "package": "io.jaypixl.artipelagocore.jobsplusintegration.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "menu.MixinCookingPotMenu",
+    "block.CampfireAccessor",
+    "block.MixinCampfireBlockEntity",
+    "block.MixinBaseContainerBlockEntity",
+    "block.MixinCampfireBlockEntityCompanion"
+  ],
+  "client": [],
+  "server": [],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
