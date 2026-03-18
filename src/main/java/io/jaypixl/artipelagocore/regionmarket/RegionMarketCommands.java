@@ -35,7 +35,6 @@ public class RegionMarketCommands {
 
         dispatcher.register(
                 Commands.literal("regionmarket")
-                        .requires(source -> source.hasPermission(2))
                         .then(Commands.literal("add")
                                 .requires(source -> source.hasPermission(2))
                                 .then(Commands.argument("regionId", StringArgumentType.word())
