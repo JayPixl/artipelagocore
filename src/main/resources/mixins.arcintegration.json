@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "package": "io.jaypixl.artipelagocore.arcintegration.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "MixinActionResult"
+  ],
+  "client": [],
+  "server": [],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "condition.artipelago.catch_in_battle": "Catch In Battle",
+  "condition.artipelago.catch_in_battle.description": "Checks whether the catch attempt is happening during a battle.",
+  "item.artipelago.raw_copper_chunk": "Raw Copper Chunk",
+  "item.artipelago.raw_iron_chunk": "Raw Iron Chunk",
+  "item.artipelago.raw_gold_chunk": "Raw Gold Chunk",
+  "item.artipelago.lapis_shard": "Lapis Shard",
+  "item.artipelago.emerald_shard": "Emerald Shard",
+  "item.artipelago.diamond_shard": "Diamond Shard"
+}

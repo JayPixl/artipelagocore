@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "artipelagocore:item/lapis_shard"
+    "layer0": "artipelago:item/raw_iron_chunk"
   }
 }
