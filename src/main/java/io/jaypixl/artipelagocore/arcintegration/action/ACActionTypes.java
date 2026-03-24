@@ -11,6 +11,8 @@ public final class ACActionTypes {
     public static ActionType<HyperTrainPokemonIvAction> ON_HYPER_TRAIN_POKEMON_IV;
     public static ActionType<ChoosePokemonSpawnBucketAction> ON_CHOOSE_POKEMON_SPAWN_BUCKET;
     public static ActionType<SpawnWildPokemonAction> ON_SPAWN_WILD_POKEMON;
+    public static ActionType<CatchWildPokemonAction> ON_CATCH_WILD_POKEMON;
+    public static ActionType<DefeatPokemonAction> ON_DEFEAT_POKEMON;
 
     public static void init() {
         ON_GAIN_POKEMON_EXP = ActionType.register(
@@ -36,6 +38,14 @@ public final class ACActionTypes {
         ON_SPAWN_WILD_POKEMON = ActionType.register(
                 ResourceLocation.fromNamespaceAndPath(ArtipelagoCoreMod.MOD_ID, "on_spawn_wild_pokemon"),
                 new SpawnWildPokemonAction.Serializer()
+        );
+        ON_DEFEAT_POKEMON = ActionType.register(
+                ResourceLocation.fromNamespaceAndPath(ArtipelagoCoreMod.MOD_ID, "on_defeat_pokemon"),
+                new DefeatPokemonAction.Serializer()
+        );
+        ON_CATCH_WILD_POKEMON = ActionType.register(
+                ResourceLocation.fromNamespaceAndPath(ArtipelagoCoreMod.MOD_ID, "on_catch_wild_pokemon"),
+                new CatchWildPokemonAction.Serializer()
         );
     }
 }

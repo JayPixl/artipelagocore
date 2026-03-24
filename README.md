@@ -48,10 +48,23 @@ The CobbledARC module adds custom ARC actions, rewards, and conditions for Cobbl
 - `artipelago:pokemon_hidden_ability`
   Marks a spawned wild Pokemon to receive a hidden ability if the reward triggers. ARC's native `chance` field should be used to control how often this happens.
 
+- `artipelago:on_catch_wild_pokemon`
+  Triggers when a wild Pokemon is caught.
+
+- `artipelago:on_defeat_pokemon`
+  Triggers upon defeating a Pokemon in battle.
+
 ### Conditions
 
-- `artipelago:catch_in_battle`
-  Matches only when the current catch attempt is happening in battle.
+- `artipelago:in_battle`
+  Matches only when the current catch attempt occurs in battle.
+
+- `artipelago:battle_context`
+  Matches the current battle context for defeating a Pokemon.
+  Supported contexts:
+  - `pvp`
+  - `wild`
+  - `npc`
 
 - `artipelago:pokemon_exp_context`
   Matches the source of EXP gain.

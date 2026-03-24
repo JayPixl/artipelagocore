@@ -1,12 +1,15 @@
 package io.jaypixl.artipelagocore.arcintegration.event;
 
 import com.cobblemon.mod.common.api.events.CobblemonEvents;
+import com.cobblemon.mod.common.api.events.battles.BattleFaintedEvent;
 import com.cobblemon.mod.common.api.events.entity.SpawnBucketChosenEvent;
 import com.cobblemon.mod.common.api.events.entity.SpawnEvent;
 import com.cobblemon.mod.common.api.events.pokemon.ExperienceGainedEvent;
 import com.cobblemon.mod.common.api.events.pokemon.EvGainedEvent;
 import com.cobblemon.mod.common.api.events.pokemon.HyperTrainedIvEvent;
 import com.cobblemon.mod.common.api.events.pokeball.PokemonCatchRateEvent;
+import com.cobblemon.mod.common.api.events.pokemon.PokemonCapturedEvent;
+import com.cobblemon.mod.common.api.battles.model.actor.BattleActor;
 import com.cobblemon.mod.common.api.pokemon.experience.BattleExperienceSource;
 import com.cobblemon.mod.common.api.pokemon.experience.CandyExperienceSource;
 import com.cobblemon.mod.common.api.pokemon.stats.BattleEvSource;
@@ -23,6 +26,7 @@ import io.jaypixl.artipelagocore.ArtipelagoCoreMod;
 import io.jaypixl.artipelagocore.arcintegration.api.ACActionResultAccess;
 import io.jaypixl.artipelagocore.arcintegration.action.ACActionDataTypes;
 import io.jaypixl.artipelagocore.arcintegration.action.ACActionTypes;
+import io.jaypixl.artipelagocore.arcintegration.condition.BattleContextCondition;
 import net.minecraft.server.level.ServerPlayer;
 
 import java.util.Map;
@@ -37,6 +41,8 @@ public class ACArcEvents {
         CobblemonEvents.HYPER_TRAINED_IV_POST.subscribe(ACArcEvents::handlePokemonHyperTrainIvPost);
         CobblemonEvents.SPAWN_BUCKET_CHOSEN.subscribe(ACArcEvents::handleSpawnBucketChosen);
         CobblemonEvents.POKEMON_ENTITY_SPAWN.subscribe(ACArcEvents::handlePokemonEntitySpawn);
+        CobblemonEvents.BATTLE_FAINTED.subscribe(ACArcEvents::handleBattlePokemonFainted);
+        CobblemonEvents.POKEMON_CAPTURED.subscribe(ACArcEvents::handleWildPokemonCaught);
     }
 
     public static void handlePokemonGainExp(ExperienceGainedEvent.Pre e) {
@@ -123,7 +129,7 @@ public class ACArcEvents {
                 .withData(ACActionDataTypes.POKEMON, e.getPokemonEntity().getPokemon())
                 .withData(ACActionDataTypes.CATCH_RATE, e.getCatchRate())
                 .withData(ACActionDataTypes.POKEBALL_TYPE, e.getPokeBallEntity().getPokeBall().getName().toString())
-                .withData(ACActionDataTypes.CATCH_IN_BATTLE, e.getPokemonEntity().getBattleId() != null)
+                .withData(ACActionDataTypes.IS_IN_BATTLE, e.getPokemonEntity().getBattleId() != null)
                 .build()
                 .sendToAction();
 
@@ -211,5 +217,42 @@ public class ACArcEvents {
         }
 
         ACArcEventHelper.tryAssignHiddenAbility(e.getEntity(), player.getGameProfile().getName());
+    }
+
+    public static void handleBattlePokemonFainted(BattleFaintedEvent e) {
+        BattleActor defeatedActor = e.getKilled().getActor();
+        for (ServerPlayer player : e.getBattle().getPlayers()) {
+            BattleActor playerActor = e.getBattle().getActor(player);
+            if (playerActor == null || playerActor.getSide() == defeatedActor.getSide() || !(player instanceof ArcServerPlayer arcplayer)) {
+                continue;
+            }
+
+            String ctx;
+
+            if (e.getBattle().isPvP()) {
+                ctx = "pvp";
+            } else if (e.getBattle().isPvW()) {
+                ctx = "pve";
+            } else {
+                ctx = "pvn";
+            }
+
+            new ActionDataBuilder(arcplayer, ACActionTypes.ON_DEFEAT_POKEMON)
+                    .withData(ACActionDataTypes.POKEMON, e.getKilled().getEffectedPokemon())
+                    .withData(ACActionDataTypes.BATTLE_CONTEXT, ctx)
+                    .build()
+                    .sendToAction();
+        }
+    }
+
+    public static void handleWildPokemonCaught(PokemonCapturedEvent e) {
+        if (!(e.getPlayer() instanceof ArcServerPlayer arcplayer)) {
+            return;
+        }
+
+        new ActionDataBuilder(arcplayer, ACActionTypes.ON_CATCH_WILD_POKEMON)
+                .withData(ACActionDataTypes.POKEMON, e.getPokemon())
+                .build()
+                .sendToAction();
     }
 }

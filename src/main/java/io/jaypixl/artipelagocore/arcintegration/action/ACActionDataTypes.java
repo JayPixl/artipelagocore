@@ -16,11 +16,12 @@ public class ACActionDataTypes {
     public static IActionDataType<Stat> EV_STAT;
     public static IActionDataType<Float> CATCH_RATE;
     public static IActionDataType<String> POKEBALL_TYPE;
-    public static IActionDataType<Boolean> CATCH_IN_BATTLE;
+    public static IActionDataType<Boolean> IS_IN_BATTLE;
     public static IActionDataType<Stat> IV_STAT;
     public static IActionDataType<Integer> IV_TARGET_VALUE;
     public static IActionDataType<Pokemon> POKEMON;
     public static IActionDataType<String> SPAWN_BUCKET;
+    public static IActionDataType<String> BATTLE_CONTEXT;
 
     public static void init() {
         EXP_GAIN_AMOUNT = ActionDataType.register(
@@ -47,7 +48,7 @@ public class ACActionDataTypes {
         POKEBALL_TYPE = ActionDataType.register(
                 ResourceLocation.fromNamespaceAndPath(ArtipelagoCoreMod.MOD_ID, "pokeball_type")
         );
-        CATCH_IN_BATTLE = ActionDataType.register(
+        IS_IN_BATTLE = ActionDataType.register(
                 ResourceLocation.fromNamespaceAndPath(ArtipelagoCoreMod.MOD_ID, "catch_in_battle")
         );
         IV_STAT = ActionDataType.register(
@@ -61,6 +62,9 @@ public class ACActionDataTypes {
         );
         SPAWN_BUCKET = ActionDataType.register(
                 ResourceLocation.fromNamespaceAndPath(ArtipelagoCoreMod.MOD_ID, "spawn_bucket")
+        );
+        BATTLE_CONTEXT = ActionDataType.register(
+                ResourceLocation.fromNamespaceAndPath(ArtipelagoCoreMod.MOD_ID, "battle_context")
         );
     }
 }

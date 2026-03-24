@@ -16,12 +16,12 @@ public class CatchInBattleCondition extends AbstractCondition {
 
     @Override
     public IConditionType<? extends CatchInBattleCondition> getType() {
-        return ACConditionTypes.CATCH_IN_BATTLE;
+        return ACConditionTypes.IN_BATTLE;
     }
 
     @Override
     public boolean isMet(ActionData actionData) {
-        Boolean inBattle = actionData.getData(ACActionDataTypes.CATCH_IN_BATTLE);
+        Boolean inBattle = actionData.getData(ACActionDataTypes.IS_IN_BATTLE);
         return Boolean.TRUE.equals(inBattle);
     }
 
