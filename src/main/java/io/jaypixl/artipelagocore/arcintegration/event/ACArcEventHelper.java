@@ -10,11 +10,24 @@ import com.cobblemon.mod.common.api.spawning.SpawnBucket;
 import com.cobblemon.mod.common.battles.pokemon.BattlePokemon;
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
 import com.daqem.arc.api.action.data.ActionDataBuilder;
+import com.daqem.arc.api.action.data.type.ActionDataType;
 import com.daqem.arc.api.action.result.ActionResult;
+import com.daqem.arc.api.player.ArcPlayer;
 import com.daqem.arc.api.player.ArcServerPlayer;
+import com.daqem.itemrestrictions.data.RestrictionResult;
+import com.daqem.itemrestrictions.level.player.ItemRestrictionsServerPlayer;
 import io.jaypixl.artipelagocore.arcintegration.action.ACActionDataTypes;
 import io.jaypixl.artipelagocore.arcintegration.action.ACActionTypes;
 import io.jaypixl.artipelagocore.arcintegration.api.ACActionResultAccess;
+import io.jaypixl.artipelagocore.arcintegration.api.RestrictionTypes;
+import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -206,5 +219,40 @@ public final class ACArcEventHelper {
         List<Stat> sorted = new ArrayList<>(stats);
         sorted.sort(Comparator.comparing(stat -> stat.getIdentifier().toString()));
         return sorted;
+    }
+
+    public static boolean isRestrictedBlockInteract(ServerPlayer serverPlayer, BlockState blockState, BlockPos blockPos, ItemStack itemStack, Level world) {
+        if (!(serverPlayer instanceof ArcPlayer arcPlayer)
+                || !(serverPlayer instanceof ItemRestrictionsServerPlayer itemRestrictionsPlayer)) {
+            return false;
+        }
+
+        RestrictionResult result = itemRestrictionsPlayer.itemrestrictions$isRestricted(
+                new ActionDataBuilder(arcPlayer, null)
+                        .withData(ActionDataType.ITEM_STACK, itemStack)
+                        .withData(ActionDataType.ITEM, itemStack.getItem())
+                        .withData(ActionDataType.BLOCK_STATE, blockState)
+                        .withData(ActionDataType.BLOCK_POSITION, blockPos)
+                        .withData(ActionDataType.WORLD, world)
+                        .build()
+        );
+        return result.isRestricted(RestrictionTypes.INTERACT_BLOCK);
+    }
+
+    public static boolean isRestrictedEntityInteract(ServerPlayer serverPlayer, Entity entity, ItemStack itemStack, Level world) {
+        if (!(serverPlayer instanceof ArcPlayer arcPlayer)
+                || !(serverPlayer instanceof ItemRestrictionsServerPlayer itemRestrictionsPlayer)) {
+            return false;
+        }
+
+        RestrictionResult result = itemRestrictionsPlayer.itemrestrictions$isRestricted(
+                new ActionDataBuilder(arcPlayer, null)
+                        .withData(ActionDataType.ITEM_STACK, itemStack)
+                        .withData(ActionDataType.ITEM, itemStack.getItem())
+                        .withData(ActionDataType.ENTITY, entity)
+                        .withData(ActionDataType.WORLD, world)
+                        .build()
+        );
+        return result.isRestricted(RestrictionTypes.INTERACT_ENTITY);
     }
 }

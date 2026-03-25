@@ -25,7 +25,7 @@ public final class ArtipelagoCoreMod {
     public ArtipelagoCoreMod(IEventBus eventBus) {
         NeoForge.EVENT_BUS.register(ArtipelagoCoreMod.class);
         NeoForge.EVENT_BUS.register(RegionMarketEvents.class);
-        //NeoForge.EVENT_BUS.register(ACArcEvents.class);
+        NeoForge.EVENT_BUS.register(ACArcEvents.class);
 
         ACActionDataTypes.init();
         ACActionTypes.init();

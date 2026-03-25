@@ -7,7 +7,7 @@ plugins {
 
 
 group = "io.github.jaypixl"
-version = "0.2.0"
+version = "0.2.1"
 
 architectury {
     platformSetupLoomIde()

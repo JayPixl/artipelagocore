@@ -6,6 +6,7 @@ import com.daqem.arc.api.action.serializer.IActionSerializer;
 import com.daqem.arc.api.action.type.IActionType;
 import com.daqem.arc.api.condition.ICondition;
 import com.daqem.arc.api.reward.IReward;
+import com.daqem.itemrestrictions.data.RestrictionType;
 import com.google.gson.JsonObject;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;

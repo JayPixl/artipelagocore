@@ -6,6 +6,7 @@ import com.daqem.arc.api.action.data.type.ActionDataType;
 import com.daqem.arc.api.action.data.type.IActionDataType;
 import io.jaypixl.artipelagocore.ArtipelagoCoreMod;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.InteractionHand;
 
 public class ACActionDataTypes {
     public static IActionDataType<Integer> EXP_GAIN_AMOUNT;
@@ -22,6 +23,7 @@ public class ACActionDataTypes {
     public static IActionDataType<Pokemon> POKEMON;
     public static IActionDataType<String> SPAWN_BUCKET;
     public static IActionDataType<String> BATTLE_CONTEXT;
+    public static IActionDataType<InteractionHand> HAND;
 
     public static void init() {
         EXP_GAIN_AMOUNT = ActionDataType.register(
@@ -65,6 +67,9 @@ public class ACActionDataTypes {
         );
         BATTLE_CONTEXT = ActionDataType.register(
                 ResourceLocation.fromNamespaceAndPath(ArtipelagoCoreMod.MOD_ID, "battle_context")
+        );
+        HAND = ActionDataType.register(
+                ResourceLocation.fromNamespaceAndPath(ArtipelagoCoreMod.MOD_ID, "hand")
         );
     }
 }

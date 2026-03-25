@@ -20,18 +20,77 @@ import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
 import com.cobblemon.mod.common.item.interactive.VitaminItem;
 import com.cobblemon.mod.common.pokemon.IVs;
 import com.daqem.arc.api.action.data.ActionDataBuilder;
+import com.daqem.arc.api.action.data.type.ActionDataType;
 import com.daqem.arc.api.action.result.ActionResult;
+import com.daqem.arc.api.action.type.ActionType;
+import com.daqem.arc.api.action.type.IActionType;
+import com.daqem.arc.api.player.ArcPlayer;
 import com.daqem.arc.api.player.ArcServerPlayer;
+import com.daqem.arc.data.condition.item.ItemInHandCondition;
+import com.daqem.arc.event.events.ActionEvent;
+import com.daqem.arc.event.triggers.BlockEvents;
+import com.daqem.arc.event.triggers.EntityEvents;
+import com.daqem.itemrestrictions.ItemRestrictions;
+import com.daqem.itemrestrictions.data.RestrictionResult;
+import com.daqem.itemrestrictions.level.player.ItemRestrictionsServerPlayer;
+import dev.architectury.event.EventResult;
 import io.jaypixl.artipelagocore.ArtipelagoCoreMod;
 import io.jaypixl.artipelagocore.arcintegration.api.ACActionResultAccess;
 import io.jaypixl.artipelagocore.arcintegration.action.ACActionDataTypes;
 import io.jaypixl.artipelagocore.arcintegration.action.ACActionTypes;
-import io.jaypixl.artipelagocore.arcintegration.condition.BattleContextCondition;
+import io.jaypixl.artipelagocore.arcintegration.api.RestrictionTypes;
+import net.minecraft.ChatFormatting;
+import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.LogicalSide;
+import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
+import net.neoforged.neoforge.event.level.BlockEvent;
 
 import java.util.Map;
 
+
 public class ACArcEvents {
+
+    @SubscribeEvent
+    public static void onInteractBlock(PlayerInteractEvent.RightClickBlock e) {
+        if (e.getSide() == LogicalSide.SERVER) {
+            if (e.getEntity() instanceof ServerPlayer serverPlayer
+                    && ACArcEventHelper.isRestrictedBlockInteract(serverPlayer, e.getLevel().getBlockState(e.getPos()), e.getPos(), e.getItemStack(), e.getLevel())) {
+                serverPlayer.sendSystemMessage(
+                        ItemRestrictions.translatable(RestrictionTypes.INTERACT_BLOCK.getTranslationKey()).withStyle(ChatFormatting.RED),
+                        true
+                );
+                e.setCanceled(true);
+                e.setCancellationResult(InteractionResult.FAIL);
+                return;
+            }
+
+            if (e.getEntity() instanceof ArcServerPlayer arcPlayer) {
+                BlockEvents.onBlockInteract(arcPlayer, e.getLevel().getBlockState(e.getPos()), e.getPos(), e.getLevel());
+            }
+        }
+    }
+
+    @SubscribeEvent
+    public static void onInteractEntity(PlayerInteractEvent.EntityInteract e) {
+        if (e.getSide() == LogicalSide.SERVER) {
+            if (e.getEntity() instanceof ServerPlayer serverPlayer
+                    && ACArcEventHelper.isRestrictedEntityInteract(serverPlayer, e.getTarget(), e.getItemStack(), e.getLevel())) {
+                serverPlayer.sendSystemMessage(
+                        ItemRestrictions.translatable(RestrictionTypes.INTERACT_ENTITY.getTranslationKey()).withStyle(ChatFormatting.RED),
+                        true
+                );
+                e.setCanceled(true);
+                e.setCancellationResult(InteractionResult.FAIL);
+            }
+        }
+    }
 
     public static void init() {
         CobblemonEvents.EXPERIENCE_GAINED_EVENT_PRE.subscribe(ACArcEvents::handlePokemonGainExp);
@@ -43,6 +102,45 @@ public class ACArcEvents {
         CobblemonEvents.POKEMON_ENTITY_SPAWN.subscribe(ACArcEvents::handlePokemonEntitySpawn);
         CobblemonEvents.BATTLE_FAINTED.subscribe(ACArcEvents::handleBattlePokemonFainted);
         CobblemonEvents.POKEMON_CAPTURED.subscribe(ACArcEvents::handleWildPokemonCaught);
+
+        ActionEvent.BEFORE_ACTION.register((actionData) -> {
+            IActionType<?> actionType = actionData.getActionType();
+            ArcPlayer patt0$temp = actionData.getPlayer();
+            if (patt0$temp instanceof ServerPlayer serverPlayer) {
+                ArcPlayer patt1$temp = actionData.getPlayer();
+                if (patt1$temp instanceof ItemRestrictionsServerPlayer itemRestrictionsPlayer) {
+                    if (actionType == ActionType.INTERACT_BLOCK) {
+                        BlockState blockState = actionData.getData(ActionDataType.BLOCK_STATE);
+                        BlockPos blockPos = actionData.getData(ActionDataType.BLOCK_POSITION);
+                        Level world = actionData.getData(ActionDataType.WORLD);
+                        ItemStack itemStack = actionData.getData(ActionDataType.ITEM_STACK);
+                        if (blockState != null && ACArcEventHelper.isRestrictedBlockInteract(
+                                serverPlayer,
+                                blockState,
+                                blockPos,
+                                itemStack,
+                                world)) {
+                            serverPlayer.sendSystemMessage(ItemRestrictions.translatable(RestrictionTypes.INTERACT_BLOCK.getTranslationKey()).withStyle(ChatFormatting.RED), true);
+                            return EventResult.interruptFalse();
+                        }
+                    } else if (actionType == ActionType.INTERACT_ENTITY) {
+                        Entity entity = actionData.getData(ActionDataType.ENTITY);
+                        Level world = actionData.getData(ActionDataType.WORLD);
+                        ItemStack itemStack = actionData.getData(ActionDataType.ITEM_STACK);
+                        if (entity != null && ACArcEventHelper.isRestrictedEntityInteract(
+                                serverPlayer,
+                                entity,
+                                itemStack,
+                                world)) {
+                            serverPlayer.sendSystemMessage(ItemRestrictions.translatable(RestrictionTypes.INTERACT_ENTITY.getTranslationKey()).withStyle(ChatFormatting.RED), true);
+                            return EventResult.interruptFalse();
+                        }
+                    }
+                }
+            }
+
+            return EventResult.pass();
+        });
     }
 
     public static void handlePokemonGainExp(ExperienceGainedEvent.Pre e) {

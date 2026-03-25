@@ -2,7 +2,9 @@ package io.jaypixl.artipelagocore.arcintegration.reward;
 
 import com.daqem.arc.api.reward.type.IRewardType;
 import com.daqem.arc.api.reward.type.RewardType;
+import com.daqem.itemrestrictions.data.RestrictionType;
 import io.jaypixl.artipelagocore.ArtipelagoCoreMod;
+import io.jaypixl.artipelagocore.arcintegration.api.RestrictionTypes;
 import net.minecraft.resources.ResourceLocation;
 
 public class ACRewardTypes {
