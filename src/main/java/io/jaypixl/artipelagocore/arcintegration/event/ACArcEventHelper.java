@@ -43,7 +43,7 @@ import java.util.WeakHashMap;
 import java.util.concurrent.ThreadLocalRandom;
 
 public final class ACArcEventHelper {
-    public static final float RIDE_INTERVAL_DISTANCE = 48.0f;
+    public static final float RIDE_INTERVAL_DISTANCE = 128.0f;
     public static final int RIDE_INTERVAL_MIN_TICKS = 100;
     private static final double MIN_RIDE_STEP_DISTANCE = 0.05D;
     private static final double MAX_RIDE_STEP_DISTANCE = 8.0D;

@@ -132,6 +132,7 @@ public class ACArcEvents {
                         BlockPos blockPos = actionData.getData(ActionDataType.BLOCK_POSITION);
                         Level world = actionData.getData(ActionDataType.WORLD);
                         ItemStack itemStack = actionData.getData(ActionDataType.ITEM_STACK);
+                        if (itemStack == null) itemStack = ItemStack.EMPTY;
                         if (blockState != null && ACArcEventHelper.isRestrictedBlockInteract(
                                 serverPlayer,
                                 blockState,
@@ -145,6 +146,7 @@ public class ACArcEvents {
                         Entity entity = actionData.getData(ActionDataType.ENTITY);
                         Level world = actionData.getData(ActionDataType.WORLD);
                         ItemStack itemStack = actionData.getData(ActionDataType.ITEM_STACK);
+                        if (itemStack == null) itemStack = ItemStack.EMPTY;
                         if (entity != null && ACArcEventHelper.isRestrictedEntityInteract(
                                 serverPlayer,
                                 entity,
