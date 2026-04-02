@@ -16,6 +16,7 @@ import com.daqem.arc.api.player.ArcPlayer;
 import com.daqem.arc.api.player.ArcServerPlayer;
 import com.daqem.itemrestrictions.data.RestrictionResult;
 import com.daqem.itemrestrictions.level.player.ItemRestrictionsServerPlayer;
+import io.jaypixl.artipelagocore.ArtipelagoCoreMod;
 import io.jaypixl.artipelagocore.arcintegration.action.ACActionDataTypes;
 import io.jaypixl.artipelagocore.arcintegration.action.ACActionTypes;
 import io.jaypixl.artipelagocore.arcintegration.api.ACActionResultAccess;
@@ -28,6 +29,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -41,8 +43,13 @@ import java.util.WeakHashMap;
 import java.util.concurrent.ThreadLocalRandom;
 
 public final class ACArcEventHelper {
+    public static final float RIDE_INTERVAL_DISTANCE = 48.0f;
+    public static final int RIDE_INTERVAL_MIN_TICKS = 100;
+    private static final double MIN_RIDE_STEP_DISTANCE = 0.05D;
+    private static final double MAX_RIDE_STEP_DISTANCE = 8.0D;
     private static final Map<PokemonBattle, Map<UUID, Map<Stat, Integer>>> BATTLE_EV_BONUS_CACHE = new WeakHashMap<>();
     private static final Map<UUID, Map<Stat, Integer>> HYPER_TRAIN_IV_OVERRIDE_CACHE = new HashMap<>();
+    private static final Map<UUID, RideProgress> RIDE_PROGRESS_CACHE = new HashMap<>();
 
     public static int rollBonusRange(int min, int max) {
         if (min < 0) {
@@ -180,6 +187,70 @@ public final class ACArcEventHelper {
 //                entity.getPokemon().getSpecies().getResourceIdentifier(),
 //                playerName
 //        );
+    }
+
+    public static void clearRideProgress(UUID playerId) {
+        RIDE_PROGRESS_CACHE.remove(playerId);
+    }
+
+    public static void tickRideProgress(ArcServerPlayer arcplayer, ServerPlayer player, PokemonEntity pokemonEntity) {
+        Vec3 currentPos = pokemonEntity.position();
+        RideProgress progress = RIDE_PROGRESS_CACHE.get(player.getUUID());
+        if (progress == null || !progress.mountId.equals(pokemonEntity.getUUID())) {
+            RIDE_PROGRESS_CACHE.put(player.getUUID(), new RideProgress(pokemonEntity.getUUID(), currentPos));
+            return;
+        }
+
+        progress.rideDurationTicks++;
+        progress.ticksSinceLastReward++;
+
+        double stepDistance = currentPos.distanceTo(progress.lastPosition);
+        progress.lastPosition = currentPos;
+
+        if (stepDistance < MIN_RIDE_STEP_DISTANCE || stepDistance > MAX_RIDE_STEP_DISTANCE) {
+            return;
+        }
+
+        progress.totalDistance += (float) stepDistance;
+        progress.intervalDistance += (float) stepDistance;
+
+        if (progress.intervalDistance < RIDE_INTERVAL_DISTANCE || progress.ticksSinceLastReward < RIDE_INTERVAL_MIN_TICKS) {
+            return;
+        }
+
+        new ActionDataBuilder(arcplayer, ACActionTypes.ON_RIDE_POKEMON_INTERVAL)
+                .withData(ACActionDataTypes.POKEMON, pokemonEntity.getPokemon())
+                .withData(ACActionDataTypes.RIDE_INTERVAL_DISTANCE, RIDE_INTERVAL_DISTANCE)
+                .withData(ACActionDataTypes.RIDE_TOTAL_DISTANCE, progress.totalDistance)
+                .withData(ACActionDataTypes.RIDE_DURATION_TICKS, progress.rideDurationTicks)
+                .build()
+                .sendToAction();
+
+        ArtipelagoCoreMod.LOGGER.info(
+                "Ride interval trigger: player={}, pokemon={}, intervalDistance={}, totalDistance={}, durationTicks={}",
+                player.getGameProfile().getName(),
+                pokemonEntity.getPokemon().getSpecies().getResourceIdentifier(),
+                RIDE_INTERVAL_DISTANCE,
+                progress.totalDistance,
+                progress.rideDurationTicks
+        );
+
+        progress.intervalDistance -= RIDE_INTERVAL_DISTANCE;
+        progress.ticksSinceLastReward = 0;
+    }
+
+    private static final class RideProgress {
+        private final UUID mountId;
+        private Vec3 lastPosition;
+        private float intervalDistance;
+        private float totalDistance;
+        private int rideDurationTicks;
+        private int ticksSinceLastReward;
+
+        private RideProgress(UUID mountId, Vec3 lastPosition) {
+            this.mountId = mountId;
+            this.lastPosition = lastPosition;
+        }
     }
 
     private static Map<Stat, Integer> distributeEvBonus(int totalBonus, BattleEvSource battleSource) {

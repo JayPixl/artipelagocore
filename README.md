@@ -10,6 +10,12 @@ The CobbledARC module adds custom ARC actions, rewards, and conditions for Cobbl
 
 ### Actions
 
+- `artipelago:on_pokemon_level_up`
+  Fires when a player's Pokemon levels up. The action data includes the Pokemon plus `old_level` and `new_level` so datapacks can key rewards off milestone levels.
+
+- `artipelago:on_ride_pokemon_interval`
+  Fires while a player is actively traveling on a ridden Pokemon. This currently triggers every 48 blocks ridden with a minimum 5-second spacing, and includes `ride_interval_distance`, `ride_total_distance`, and `ride_duration_ticks`.
+
 - `artipelago:on_gain_pokemon_exp`
   Fires when a player's Pokemon gains EXP. This can be used for rewards that modify EXP gain, with conditions to distinguish battle EXP from EXP candy.
 

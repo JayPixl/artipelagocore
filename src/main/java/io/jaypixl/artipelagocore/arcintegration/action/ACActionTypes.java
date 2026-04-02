@@ -5,6 +5,8 @@ import io.jaypixl.artipelagocore.ArtipelagoCoreMod;
 import net.minecraft.resources.ResourceLocation;
 
 public final class ACActionTypes {
+    public static ActionType<LevelUpPokemonAction> ON_POKEMON_LEVEL_UP;
+    public static ActionType<RidePokemonIntervalAction> ON_RIDE_POKEMON_INTERVAL;
     public static ActionType<GainPokemonExpAction> ON_GAIN_POKEMON_EXP;
     public static ActionType<GainPokemonEvAction> ON_GAIN_POKEMON_EVS;
     public static ActionType<ModifyPokemonCatchRateAction> ON_MODIFY_POKEMON_CATCH_RATE;
@@ -15,6 +17,14 @@ public final class ACActionTypes {
     public static ActionType<DefeatPokemonAction> ON_DEFEAT_POKEMON;
 
     public static void init() {
+        ON_POKEMON_LEVEL_UP = ActionType.register(
+                ResourceLocation.fromNamespaceAndPath(ArtipelagoCoreMod.MOD_ID, "on_pokemon_level_up"),
+                new LevelUpPokemonAction.Serializer()
+        );
+        ON_RIDE_POKEMON_INTERVAL = ActionType.register(
+                ResourceLocation.fromNamespaceAndPath(ArtipelagoCoreMod.MOD_ID, "on_ride_pokemon_interval"),
+                new RidePokemonIntervalAction.Serializer()
+        );
         ON_GAIN_POKEMON_EXP = ActionType.register(
                 ResourceLocation.fromNamespaceAndPath(ArtipelagoCoreMod.MOD_ID, "on_gain_pokemon_exp"),
                 new GainPokemonExpAction.Serializer()

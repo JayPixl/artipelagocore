@@ -9,6 +9,11 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 
 public class ACActionDataTypes {
+    public static IActionDataType<Integer> OLD_LEVEL;
+    public static IActionDataType<Integer> NEW_LEVEL;
+    public static IActionDataType<Float> RIDE_INTERVAL_DISTANCE;
+    public static IActionDataType<Float> RIDE_TOTAL_DISTANCE;
+    public static IActionDataType<Integer> RIDE_DURATION_TICKS;
     public static IActionDataType<Integer> EXP_GAIN_AMOUNT;
     public static IActionDataType<Boolean> EXP_GAINED_IN_BATTLE;
     public static IActionDataType<Boolean> EXP_GAINED_FROM_CANDY;
@@ -26,6 +31,21 @@ public class ACActionDataTypes {
     public static IActionDataType<InteractionHand> HAND;
 
     public static void init() {
+        OLD_LEVEL = ActionDataType.register(
+                ResourceLocation.fromNamespaceAndPath(ArtipelagoCoreMod.MOD_ID, "old_level")
+        );
+        NEW_LEVEL = ActionDataType.register(
+                ResourceLocation.fromNamespaceAndPath(ArtipelagoCoreMod.MOD_ID, "new_level")
+        );
+        RIDE_INTERVAL_DISTANCE = ActionDataType.register(
+                ResourceLocation.fromNamespaceAndPath(ArtipelagoCoreMod.MOD_ID, "ride_interval_distance")
+        );
+        RIDE_TOTAL_DISTANCE = ActionDataType.register(
+                ResourceLocation.fromNamespaceAndPath(ArtipelagoCoreMod.MOD_ID, "ride_total_distance")
+        );
+        RIDE_DURATION_TICKS = ActionDataType.register(
+                ResourceLocation.fromNamespaceAndPath(ArtipelagoCoreMod.MOD_ID, "ride_duration_ticks")
+        );
         EXP_GAIN_AMOUNT = ActionDataType.register(
                 ResourceLocation.fromNamespaceAndPath(ArtipelagoCoreMod.MOD_ID, "exp_gain_amount")
         );

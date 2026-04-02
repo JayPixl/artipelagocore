@@ -7,6 +7,7 @@ import com.cobblemon.mod.common.api.events.entity.SpawnEvent;
 import com.cobblemon.mod.common.api.events.pokemon.ExperienceGainedEvent;
 import com.cobblemon.mod.common.api.events.pokemon.EvGainedEvent;
 import com.cobblemon.mod.common.api.events.pokemon.HyperTrainedIvEvent;
+import com.cobblemon.mod.common.api.events.pokemon.LevelUpEvent;
 import com.cobblemon.mod.common.api.events.pokeball.PokemonCatchRateEvent;
 import com.cobblemon.mod.common.api.events.pokemon.PokemonCapturedEvent;
 import com.cobblemon.mod.common.api.battles.model.actor.BattleActor;
@@ -18,6 +19,7 @@ import com.cobblemon.mod.common.api.pokemon.stats.Stat;
 import com.cobblemon.mod.common.api.pokemon.stats.Stats;
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
 import com.cobblemon.mod.common.item.interactive.VitaminItem;
+import com.cobblemon.mod.common.pokeball.PokeBall;
 import com.cobblemon.mod.common.pokemon.IVs;
 import com.daqem.arc.api.action.data.ActionDataBuilder;
 import com.daqem.arc.api.action.data.type.ActionDataType;
@@ -34,13 +36,13 @@ import com.daqem.itemrestrictions.ItemRestrictions;
 import com.daqem.itemrestrictions.data.RestrictionResult;
 import com.daqem.itemrestrictions.level.player.ItemRestrictionsServerPlayer;
 import dev.architectury.event.EventResult;
-import io.jaypixl.artipelagocore.ArtipelagoCoreMod;
 import io.jaypixl.artipelagocore.arcintegration.api.ACActionResultAccess;
 import io.jaypixl.artipelagocore.arcintegration.action.ACActionDataTypes;
 import io.jaypixl.artipelagocore.arcintegration.action.ACActionTypes;
 import io.jaypixl.artipelagocore.arcintegration.api.RestrictionTypes;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
@@ -51,6 +53,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.LogicalSide;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.level.BlockEvent;
+import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
 import java.util.Map;
 
@@ -92,7 +95,22 @@ public class ACArcEvents {
         }
     }
 
+    @SubscribeEvent
+    public static void onPlayerTick(PlayerTickEvent.Post e) {
+        if (!(e.getEntity() instanceof ServerPlayer player) || !(player instanceof ArcServerPlayer arcplayer)) {
+            return;
+        }
+
+        if (!(player.getVehicle() instanceof PokemonEntity pokemonEntity) || pokemonEntity.getControllingPassenger() != player) {
+            ACArcEventHelper.clearRideProgress(player.getUUID());
+            return;
+        }
+
+        ACArcEventHelper.tickRideProgress(arcplayer, player, pokemonEntity);
+    }
+
     public static void init() {
+        CobblemonEvents.LEVEL_UP_EVENT.subscribe(ACArcEvents::handlePokemonLevelUp);
         CobblemonEvents.EXPERIENCE_GAINED_EVENT_PRE.subscribe(ACArcEvents::handlePokemonGainExp);
         CobblemonEvents.EV_GAINED_EVENT_PRE.subscribe(ACArcEvents::handlePokemonGainEvs);
         CobblemonEvents.POKEMON_CATCH_RATE.subscribe(ACArcEvents::handlePokemonCatchRate);
@@ -141,6 +159,19 @@ public class ACArcEvents {
 
             return EventResult.pass();
         });
+    }
+
+    public static void handlePokemonLevelUp(LevelUpEvent e) {
+        if (!(e.getPokemon().getOwnerPlayer() instanceof ArcServerPlayer arcplayer)) {
+            return;
+        }
+
+        new ActionDataBuilder(arcplayer, ACActionTypes.ON_POKEMON_LEVEL_UP)
+                .withData(ACActionDataTypes.POKEMON, e.getPokemon())
+                .withData(ACActionDataTypes.OLD_LEVEL, e.getOldLevel())
+                .withData(ACActionDataTypes.NEW_LEVEL, e.getNewLevel())
+                .build()
+                .sendToAction();
     }
 
     public static void handlePokemonGainExp(ExperienceGainedEvent.Pre e) {

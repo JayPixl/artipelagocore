@@ -1,5 +1,4 @@
 package io.jaypixl.artipelagocore.arcintegration.mixin;
-
 import com.daqem.arc.api.action.result.ActionResult;
 import io.jaypixl.artipelagocore.arcintegration.api.ACActionResultAccess;
 import org.spongepowered.asm.mixin.Mixin;

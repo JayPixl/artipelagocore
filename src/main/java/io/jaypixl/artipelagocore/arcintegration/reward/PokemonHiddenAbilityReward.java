@@ -1,5 +1,6 @@
 package io.jaypixl.artipelagocore.arcintegration.reward;
 
+import com.cobblemon.mod.common.api.events.CobblemonEvents;
 import com.daqem.arc.api.action.data.ActionData;
 import com.daqem.arc.api.action.result.ActionResult;
 import com.daqem.arc.api.reward.AbstractReward;

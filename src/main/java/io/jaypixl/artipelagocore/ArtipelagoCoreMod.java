@@ -1,5 +1,6 @@
 package io.jaypixl.artipelagocore;
 
+import com.cobblemon.mod.common.CobblemonItems;
 import com.mojang.logging.LogUtils;
 import io.jaypixl.artipelagocore.arcintegration.action.ACActionDataTypes;
 import io.jaypixl.artipelagocore.arcintegration.action.ACActionTypes;
