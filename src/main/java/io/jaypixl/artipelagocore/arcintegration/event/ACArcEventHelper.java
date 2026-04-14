@@ -15,6 +15,7 @@ import com.daqem.arc.api.action.result.ActionResult;
 import com.daqem.arc.api.player.ArcPlayer;
 import com.daqem.arc.api.player.ArcServerPlayer;
 import com.daqem.itemrestrictions.data.RestrictionResult;
+import com.daqem.itemrestrictions.data.RestrictionType;
 import com.daqem.itemrestrictions.level.player.ItemRestrictionsServerPlayer;
 import io.jaypixl.artipelagocore.ArtipelagoCoreMod;
 import io.jaypixl.artipelagocore.arcintegration.action.ACActionDataTypes;
@@ -308,6 +309,23 @@ public final class ACArcEventHelper {
                         .build()
         );
         return result.isRestricted(RestrictionTypes.INTERACT_BLOCK);
+    }
+
+    public static boolean isRestrictedBlockPlace(ServerPlayer serverPlayer, BlockState blockState, BlockPos blockPos, Level world) {
+        if (!(serverPlayer instanceof ArcPlayer arcPlayer)
+                || !(serverPlayer instanceof ItemRestrictionsServerPlayer itemRestrictionsPlayer)) {
+            return false;
+        }
+
+        RestrictionResult result = itemRestrictionsPlayer.itemrestrictions$isRestricted(
+                new ActionDataBuilder(arcPlayer, null)
+                        .withData(ActionDataType.ITEM_STACK, blockState.getBlock().asItem().getDefaultInstance())
+                        .withData(ActionDataType.BLOCK_STATE, blockState)
+                        .withData(ActionDataType.BLOCK_POSITION, blockPos)
+                        .withData(ActionDataType.WORLD, world)
+                        .build()
+        );
+        return result.isRestricted(RestrictionType.PLACE_BLOCK);
     }
 
     public static boolean isRestrictedEntityInteract(ServerPlayer serverPlayer, Entity entity, ItemStack itemStack, Level world) {

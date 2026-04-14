@@ -1,0 +1,14 @@
+{
+  "required": true,
+  "package": "io.jaypixl.artipelagocore.yawp.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "MixinMedicinalLeekItem",
+    "MixinPlaceOnWaterBlockItem"
+  ],
+  "client": [],
+  "server": [],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

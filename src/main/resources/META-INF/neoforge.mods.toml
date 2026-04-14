@@ -37,3 +37,6 @@ config = "mixins.cobbledarc.json"
 
 [[mixins]]
 config = "mixins.arcintegration.json"
+
+[[mixins]]
+config = "mixins.yawp.json"

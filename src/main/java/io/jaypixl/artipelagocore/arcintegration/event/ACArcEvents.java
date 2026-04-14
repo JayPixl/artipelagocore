@@ -33,6 +33,7 @@ import com.daqem.arc.event.events.ActionEvent;
 import com.daqem.arc.event.triggers.BlockEvents;
 import com.daqem.arc.event.triggers.EntityEvents;
 import com.daqem.itemrestrictions.ItemRestrictions;
+import com.daqem.itemrestrictions.data.RestrictionType;
 import com.daqem.itemrestrictions.data.RestrictionResult;
 import com.daqem.itemrestrictions.level.player.ItemRestrictionsServerPlayer;
 import dev.architectury.event.EventResult;
@@ -49,8 +50,10 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.LogicalSide;
+import net.neoforged.neoforge.common.util.TriState;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.level.BlockEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
@@ -59,6 +62,25 @@ import java.util.Map;
 
 
 public class ACArcEvents {
+
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    public static void onPlaceBlock(BlockEvent.EntityPlaceEvent e) {
+        if (!(e.getEntity() instanceof ServerPlayer serverPlayer) || !(e.getLevel() instanceof Level level)) {
+            return;
+        }
+
+        if (!ACArcEventHelper.isRestrictedBlockPlace(serverPlayer, e.getPlacedBlock(), e.getPos(), level)) {
+            return;
+        }
+
+        serverPlayer.sendSystemMessage(
+                ItemRestrictions.translatable(RestrictionType.PLACE_BLOCK.getTranslationKey()).withStyle(ChatFormatting.RED),
+                true
+        );
+        e.getBlockSnapshot().restore();
+        e.setCanceled(true);
+        serverPlayer.inventoryMenu.sendAllDataToRemote();
+    }
 
     @SubscribeEvent
     public static void onInteractBlock(PlayerInteractEvent.RightClickBlock e) {
@@ -71,6 +93,9 @@ public class ACArcEvents {
                 );
                 e.setCanceled(true);
                 e.setCancellationResult(InteractionResult.FAIL);
+                e.setUseBlock(TriState.FALSE);
+                e.setUseItem(TriState.FALSE);
+                serverPlayer.inventoryMenu.sendAllDataToRemote();
                 return;
             }
 
@@ -91,6 +116,7 @@ public class ACArcEvents {
                 );
                 e.setCanceled(true);
                 e.setCancellationResult(InteractionResult.FAIL);
+                serverPlayer.inventoryMenu.sendAllDataToRemote();
             }
         }
     }
