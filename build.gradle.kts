@@ -7,7 +7,7 @@ plugins {
 
 
 group = "io.github.jaypixl"
-version = "0.2.3"
+version = "0.2.5"
 
 architectury {
     platformSetupLoomIde()
@@ -24,14 +24,14 @@ repositories {
     maven("https://maven.impactdev.net/repository/development/")
     maven("https://hub.spigotmc.org/nexus/content/groups/public/")
     maven("https://thedarkcolour.github.io/KotlinForForge/")
-    maven("https://maven.neoforged.net")
+    maven("https://maven.neoforged.net/releases")
     maven("https://cursemaven.com")
 }
 
 dependencies {
     minecraft("net.minecraft:minecraft:1.21.1")
     mappings(loom.officialMojangMappings())
-    neoForge("net.neoforged:neoforge:21.1.197") // prev 21.1.182
+    neoForge("net.neoforged:neoforge:21.1.230") // prev 21.1.182
 
     modImplementation("com.cobblemon:neoforge:1.7.3+1.21.1")
     //Needed for cobblemon
@@ -41,11 +41,12 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.0")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.10.0")
 
-    modImplementation("curse.maven:yawp-663276:7166805")
+    modImplementation("curse.maven:yawp-663276:8034329")
     modImplementation("curse.maven:lightmans-currency-472521:7697352")
     modImplementation("curse.maven:jobs-remastered-916985:7239650")
     modImplementation("curse.maven:arc-lib-883593:6205985")
     modImplementation("curse.maven:item-restrictions-887774:6206057")
+    modImplementation("curse.maven:carved-wood-1335174:8074012")
 
     modImplementation("curse.maven:forge-config-api-port-547434:7213611")
     modImplementation("curse.maven:architectury-api-419699:5786327")

@@ -1,7 +1,7 @@
 package io.jaypixl.artipelagocore.yawp;
 
 import de.z0rdak.yawp.api.FlagEvaluator;
-import de.z0rdak.yawp.api.events.region.FlagCheckEvent;
+import de.z0rdak.yawp.api.events.flag.FlagCheckRequest;
 import de.z0rdak.yawp.core.flag.RegionFlag;
 import de.z0rdak.yawp.platform.Services;
 import net.minecraft.core.BlockPos;
@@ -28,8 +28,8 @@ public final class YawpCompatHelper {
             return null;
         }
 
-        FlagCheckEvent flagCheck = new FlagCheckEvent(placedPos, RegionFlag.PLACE_BLOCKS, level.dimension(), serverPlayer);
-        if (Services.EVENT.post(flagCheck)) {
+        FlagCheckRequest flagCheck = new FlagCheckRequest(placedPos, RegionFlag.PLACE_BLOCKS, level.dimension(), serverPlayer);
+        if (Services.FLAG_EVENT_DISPATCHER.post(flagCheck)) {
             return null;
         }
 

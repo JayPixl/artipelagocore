@@ -10,6 +10,7 @@ import io.jaypixl.artipelagocore.arcintegration.reward.ACRewardTypes;
 import io.jaypixl.artipelagocore.item.ModItems;
 import io.jaypixl.artipelagocore.regionmarket.RegionMarketCommands;
 import io.jaypixl.artipelagocore.regionmarket.RegionMarketEvents;
+import io.jaypixl.artipelagocore.yawp.YawpHoeTillFixEvents;
 import io.jaypixl.artipelagocore.yawp.YawpVisualFixEvents;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -28,6 +29,7 @@ public final class ArtipelagoCoreMod {
         NeoForge.EVENT_BUS.register(ArtipelagoCoreMod.class);
         NeoForge.EVENT_BUS.register(RegionMarketEvents.class);
         NeoForge.EVENT_BUS.register(ACArcEvents.class);
+        NeoForge.EVENT_BUS.register(YawpHoeTillFixEvents.class);
         NeoForge.EVENT_BUS.register(YawpVisualFixEvents.class);
 
         ACActionDataTypes.init();

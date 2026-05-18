@@ -6,7 +6,7 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import de.z0rdak.yawp.api.core.IDimensionRegionApi;
+import de.z0rdak.yawp.api.core.ILevelRegionApi;
 import de.z0rdak.yawp.api.core.RegionManager;
 import de.z0rdak.yawp.api.permission.Permissions;
 import de.z0rdak.yawp.core.region.IMarkableRegion;
@@ -77,14 +77,14 @@ public class RegionMarketCommands {
         ServerLevel level = ctx.getSource().getLevel();
         RegionMarketSavedData data = RegionMarketSavedData.get(level);
 
-        Optional<IDimensionRegionApi> optionalIDimensionRegionApi = RegionManager.get().getDimRegionApi(level.dimension());
+        Optional<ILevelRegionApi> optionalIDimensionRegionApi = RegionManager.get().getDimRegionApi(level.dimension());
 
         if (optionalIDimensionRegionApi.isEmpty()) {
             ctx.getSource().sendFailure(Component.literal("Error getting dimensional region for " + level.dimension()));
             return 0;
         }
 
-        IDimensionRegionApi regionApi = optionalIDimensionRegionApi.get();
+        ILevelRegionApi regionApi = optionalIDimensionRegionApi.get();
 
         if (!regionApi.hasLocal(regionId)) {
             ctx.getSource().sendFailure(Component.literal("Region with id " + regionId + " does not exist!"));
@@ -108,14 +108,14 @@ public class RegionMarketCommands {
 
         RegionMarketSavedData data = RegionMarketSavedData.get(level);
 
-        Optional<IDimensionRegionApi> optionalIDimensionRegionApi = RegionManager.get().getDimRegionApi(level.dimension());
+        Optional<ILevelRegionApi> optionalIDimensionRegionApi = RegionManager.get().getDimRegionApi(level.dimension());
 
         if (optionalIDimensionRegionApi.isEmpty()) {
             ctx.getSource().sendFailure(Component.literal("Error getting dimensional region for " + level.dimension()));
             return 0;
         }
 
-        IDimensionRegionApi regionApi = optionalIDimensionRegionApi.get();
+        ILevelRegionApi regionApi = optionalIDimensionRegionApi.get();
 
         if (!regionApi.hasLocal(regionId)) {
             ctx.getSource().sendFailure(Component.literal("Region with id " + regionId + " does not exist!"));
@@ -204,14 +204,14 @@ public class RegionMarketCommands {
 
         String regionId = starterEntry.getId();
 
-        Optional<IDimensionRegionApi> optionalIDimensionRegionApi = RegionManager.get().getDimRegionApi(level.dimension());
+        Optional<ILevelRegionApi> optionalIDimensionRegionApi = RegionManager.get().getDimRegionApi(level.dimension());
 
         if (optionalIDimensionRegionApi.isEmpty()) {
             ctx.getSource().sendFailure(Component.literal("Error getting dimensional region for " + level.dimension()));
             return 0;
         }
 
-        IDimensionRegionApi regionApi = optionalIDimensionRegionApi.get();
+        ILevelRegionApi regionApi = optionalIDimensionRegionApi.get();
 
         Optional<IMarkableRegion> optionalRegion = regionApi.getLocalRegion(regionId);
 
@@ -270,14 +270,14 @@ public class RegionMarketCommands {
             return 0;
         }
 
-        Optional<IDimensionRegionApi> optionalIDimensionRegionApi = RegionManager.get().getDimRegionApi(level.dimension());
+        Optional<ILevelRegionApi> optionalIDimensionRegionApi = RegionManager.get().getDimRegionApi(level.dimension());
 
         if (optionalIDimensionRegionApi.isEmpty()) {
             ctx.getSource().sendFailure(Component.literal("Error getting dimensional region for " + level.dimension()));
             return 0;
         }
 
-        IDimensionRegionApi regionApi = optionalIDimensionRegionApi.get();
+        ILevelRegionApi regionApi = optionalIDimensionRegionApi.get();
 
         Optional<IMarkableRegion> optionalRegion = regionApi.getLocalRegion(regionId);
 
@@ -331,14 +331,14 @@ public class RegionMarketCommands {
 
         RegionMarketSavedData data = RegionMarketSavedData.get(level);
 
-        Optional<IDimensionRegionApi> optionalIDimensionRegionApi = RegionManager.get().getDimRegionApi(level.dimension());
+        Optional<ILevelRegionApi> optionalIDimensionRegionApi = RegionManager.get().getDimRegionApi(level.dimension());
 
         if (optionalIDimensionRegionApi.isEmpty()) {
             ctx.getSource().sendFailure(Component.literal("Error getting dimensional region for " + level.dimension()));
             return 0;
         }
 
-        IDimensionRegionApi regionApi = optionalIDimensionRegionApi.get();
+        ILevelRegionApi regionApi = optionalIDimensionRegionApi.get();
 
         List<IMarkableRegion> regionList = regionApi.getRegionsAt(player.blockPosition());
 
