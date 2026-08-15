@@ -7,8 +7,7 @@
     "block.CampfireAccessor",
     "block.MixinCampfireBlockEntity",
     "block.MixinBaseContainerBlockEntity",
-    "block.MixinCampfireBlockEntityCompanion",
-    "menu.MixinCWCraftingMenu"
+    "block.MixinCampfireBlockEntityCompanion"
   ],
   "client": [],
   "server": [],

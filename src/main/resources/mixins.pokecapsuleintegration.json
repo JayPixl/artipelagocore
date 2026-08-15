@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "package": "io.jaypixl.artipelagocore.pokecapsuleintegration.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "PlaceBallHandlerMixin"
+  ],
+  "client": [],
+  "server": [],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

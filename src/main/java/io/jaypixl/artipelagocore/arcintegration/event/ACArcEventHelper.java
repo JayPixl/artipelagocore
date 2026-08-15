@@ -227,14 +227,14 @@ public final class ACArcEventHelper {
                 .build()
                 .sendToAction();
 
-        ArtipelagoCoreMod.LOGGER.info(
+        /* ArtipelagoCoreMod.LOGGER.info(
                 "Ride interval trigger: player={}, pokemon={}, intervalDistance={}, totalDistance={}, durationTicks={}",
                 player.getGameProfile().getName(),
                 pokemonEntity.getPokemon().getSpecies().getResourceIdentifier(),
                 RIDE_INTERVAL_DISTANCE,
                 progress.totalDistance,
                 progress.rideDurationTicks
-        );
+        ); */
 
         progress.intervalDistance -= RIDE_INTERVAL_DISTANCE;
         progress.ticksSinceLastReward = 0;
