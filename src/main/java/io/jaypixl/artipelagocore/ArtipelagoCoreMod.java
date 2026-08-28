@@ -2,12 +2,17 @@ package io.jaypixl.artipelagocore;
 
 import com.cobblemon.mod.common.CobblemonItems;
 import com.mojang.logging.LogUtils;
-import io.jaypixl.artipelagocore.arcintegration.action.ACActionDataTypes;
-import io.jaypixl.artipelagocore.arcintegration.action.ACActionTypes;
-import io.jaypixl.artipelagocore.arcintegration.condition.ACConditionTypes;
-import io.jaypixl.artipelagocore.arcintegration.event.ACArcEvents;
-import io.jaypixl.artipelagocore.arcintegration.reward.ACRewardTypes;
+//import io.jaypixl.artipelagocore.arcintegration.action.ACActionDataTypes;
+//import io.jaypixl.artipelagocore.arcintegration.action.ACActionTypes;
+//import io.jaypixl.artipelagocore.arcintegration.condition.ACConditionTypes;
+//import io.jaypixl.artipelagocore.arcintegration.event.ACArcEvents;
+//import io.jaypixl.artipelagocore.arcintegration.reward.ACRewardTypes;
 import io.jaypixl.artipelagocore.item.ModItems;
+import io.jaypixl.artipelagocore.events.command.EventCommands;
+import io.jaypixl.artipelagocore.events.runtime.EventModuleEvents;
+import io.jaypixl.artipelagocore.events.runtime.SpawnEffectEvents;
+import io.jaypixl.artipelagocore.events.runtime.PlayerXpEffectEvents;
+import io.jaypixl.artipelagocore.events.runtime.PokemonProgressionEffectEvents;
 import io.jaypixl.artipelagocore.regionmarket.RegionMarketCommands;
 import io.jaypixl.artipelagocore.regionmarket.RegionMarketEvents;
 import io.jaypixl.artipelagocore.yawp.YawpHoeTillFixEvents;
@@ -28,15 +33,19 @@ public final class ArtipelagoCoreMod {
     public ArtipelagoCoreMod(IEventBus eventBus) {
         NeoForge.EVENT_BUS.register(ArtipelagoCoreMod.class);
         NeoForge.EVENT_BUS.register(RegionMarketEvents.class);
-        NeoForge.EVENT_BUS.register(ACArcEvents.class);
+        NeoForge.EVENT_BUS.register(EventModuleEvents.class);
+        SpawnEffectEvents.register();
+        PokemonProgressionEffectEvents.register();
+        NeoForge.EVENT_BUS.register(PlayerXpEffectEvents.class);
+        //NeoForge.EVENT_BUS.register(ACArcEvents.class);
         NeoForge.EVENT_BUS.register(YawpHoeTillFixEvents.class);
         NeoForge.EVENT_BUS.register(YawpVisualFixEvents.class);
 
-        ACActionDataTypes.init();
-        ACActionTypes.init();
-        ACConditionTypes.init();
-        ACArcEvents.init();
-        ACRewardTypes.init();
+//        ACActionDataTypes.init();
+//        ACActionTypes.init();
+//        ACConditionTypes.init();
+//        ACArcEvents.init();
+//        ACRewardTypes.init();
 
         ModItems.register(eventBus);
     }
@@ -44,6 +53,7 @@ public final class ArtipelagoCoreMod {
     @SubscribeEvent
     public static void onCommandRegistration(final RegisterCommandsEvent event) {
         RegionMarketCommands.register(event.getDispatcher());
+        EventCommands.register(event.getDispatcher());
     }
 
 }

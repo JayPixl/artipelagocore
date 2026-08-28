@@ -33,12 +33,6 @@ ordering = "AFTER"
 side = "BOTH"
 
 [[mixins]]
-config = "mixins.cobbledarc.json"
-
-[[mixins]]
-config = "mixins.arcintegration.json"
-
-[[mixins]]
 config = "mixins.yawp.json"
 
 [[mixins]]

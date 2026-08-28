@@ -7,7 +7,7 @@ plugins {
 
 
 group = "io.github.jaypixl"
-version = "0.2.7"
+version = "0.2.8"
 
 architectury {
     platformSetupLoomIde()
@@ -43,18 +43,18 @@ dependencies {
 
     modImplementation("curse.maven:yawp-663276:8034329")
     modImplementation("curse.maven:lightmans-currency-472521:8366260")
-    modImplementation("curse.maven:jobs-remastered-916985:8125195")
-    modImplementation("curse.maven:arc-lib-883593:8125132")
-    modImplementation("curse.maven:item-restrictions-887774:8125177")
+    //modImplementation("curse.maven:jobs-remastered-916985:8125195")
+    //modImplementation("curse.maven:arc-lib-883593:8125132")
+    //modImplementation("curse.maven:item-restrictions-887774:8125177")
     //modImplementation("curse.maven:carved-wood-1335174:8437529")
     modImplementation("curse.maven:cobblemon-occupied-pokeballs-reforged-1561082:8342230")
 
     modImplementation("curse.maven:forge-config-api-port-547434:7213611")
-    modImplementation("curse.maven:architectury-api-419699:5786327")
+    //modImplementation("curse.maven:architectury-api-419699:5786327")
 
-    runtimeOnly("curse.maven:ui-lib-933200:8125054")
-    runtimeOnly("curse.maven:yaml-config-1128669:8125096")
-    runtimeOnly("curse.maven:knot-1470052:7987037")
+    //runtimeOnly("curse.maven:ui-lib-933200:8125054")
+    //runtimeOnly("curse.maven:yaml-config-1128669:8125096")
+    //runtimeOnly("curse.maven:knot-1470052:7987037")
 }
 
 tasks.getByName<Test>("test") {

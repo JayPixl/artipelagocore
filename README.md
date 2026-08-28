@@ -108,3 +108,27 @@ This powerup example gives a 15% chance for wild spawns to receive a hidden abil
   ]
 }
 ```
+
+## Events
+
+The events module writes its global and recurring-event configuration to
+`config/artipelago/events.json` on first server start. Scheduled events are persisted in the
+world's saved data, so they survive restarts.
+
+Operator commands start configured presets and manage the scheduler:
+
+```text
+/events list
+/events list detail
+/events start <preset> <minutes>
+/events stop <preset>
+/events shutdown
+/events reload
+```
+
+Presets, one-time schedules, and weekly UTC schedules are configured in `events.json`; one-time
+schedule timestamps use `YYYY-DD-MM@HH:MM` (for example, `2026-26-08@15:00`). For
+example, `/events start weekend 120` starts the `weekend` preset for two hours. Integrations can obtain active effects through
+`EventManager.getActiveEffects` or stack a typed multiplier with `EventManager.getMultiplier`.
+Effects are stored as a type plus arbitrary JSON parameters, allowing granular effects such as
+a species-specific spawn chance and hidden-ability flag without changing the event format.
