@@ -4,7 +4,7 @@ import io.jaypixl.artipelagocore.events.effect.EventEffect;
 
 import java.util.List;
 
-public record ScheduledEvent(String id, String name, String description, long startTime, long endTime,
+public record ScheduledEvent(String id, String name, List<String> description, long startTime, long endTime,
                              List<EventEffect> effects, String recurringId) {
 
     public ScheduledEvent {
@@ -14,7 +14,7 @@ public record ScheduledEvent(String id, String name, String description, long st
         if (endTime <= startTime) {
             throw new IllegalArgumentException("Event end time must be after its start time");
         }
-        description = description == null ? "" : description;
+        description = description == null ? List.of() : List.copyOf(description);
         effects = effects == null ? List.of() : List.copyOf(effects);
         recurringId = recurringId == null ? "" : recurringId;
     }

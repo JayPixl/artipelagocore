@@ -14,7 +14,7 @@ public final class EventConfig {
     public static final class Preset {
         public String id = "";
         public String name = "";
-        public String description = "";
+        public List<String> description = List.of();
         public List<EventEffect> effects = List.of();
     }
     /** A schedule with type {@code weekly} uses day and HH:mm start/end; {@code once} uses UTC {@code YYYY-DD-MM@HH:MM}. */

@@ -7,7 +7,7 @@ Config: {
 Preset: {
   id: String
   name: String
-  description: String
+  description: String[]
   effects: Effect[]
 }
 

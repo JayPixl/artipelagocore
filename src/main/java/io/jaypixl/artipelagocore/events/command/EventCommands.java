@@ -15,12 +15,14 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.network.chat.Component;
+import net.minecraft.ChatFormatting;
 import java.util.List;
 
 public final class EventCommands {
     private EventCommands() { }
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(Commands.literal("events")
+                .executes(EventCommands::list)
                 .then(Commands.literal("list").executes(EventCommands::list)
                         .then(Commands.literal("detail").requires(source -> source.hasPermission(2)).executes(EventCommands::detail)))
                 .then(Commands.literal("start").requires(source -> source.hasPermission(2))
@@ -39,13 +41,13 @@ public final class EventCommands {
     private static int list(CommandContext<CommandSourceStack> context) {
         List<ScheduledEvent> events = EventManager.getActiveEvents(context.getSource().getServer()).stream().toList();
         if (events.isEmpty()) { context.getSource().sendSuccess(() -> Component.literal("No active events."), false); return 1; }
-        for (ScheduledEvent event : events) context.getSource().sendSuccess(() -> Component.literal(event.name() + ": " + event.description()), false);
+        for (ScheduledEvent event : events) sendEvent(context.getSource(), event, false);
         return events.size();
     }
     private static int detail(CommandContext<CommandSourceStack> context) {
         List<ScheduledEvent> events = EventManager.getActiveEvents(context.getSource().getServer()).stream().toList();
         if (events.isEmpty()) { context.getSource().sendSuccess(() -> Component.literal("No active events."), false); return 1; }
-        for (ScheduledEvent event : events) context.getSource().sendSuccess(() -> Component.literal("[" + event.id() + "] " + event.name() + ": " + event.description()), false);
+        for (ScheduledEvent event : events) sendEvent(context.getSource(), event, true);
         return events.size();
     }
     private static int start(CommandContext<CommandSourceStack> context) {
@@ -77,5 +79,15 @@ public final class EventCommands {
         EventScheduler.reload(context.getSource().getServer());
         context.getSource().sendSuccess(() -> Component.literal("Event config and schedules reloaded."), true);
         return 1;
+    }
+    private static void sendEvent(CommandSourceStack source, ScheduledEvent event, boolean detailed) {
+        Component title = detailed
+                ? Component.literal("[" + event.id() + "] ").withStyle(ChatFormatting.DARK_GRAY)
+                        .append(Component.literal(event.name()).withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD))
+                : Component.literal(event.name()).withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD);
+        source.sendSuccess(() -> title, false);
+        for (String line : event.description()) {
+            source.sendSuccess(() -> Component.literal("  " + line).withStyle(ChatFormatting.GRAY), false);
+        }
     }
 }

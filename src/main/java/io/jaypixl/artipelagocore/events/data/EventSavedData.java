@@ -2,6 +2,10 @@ package io.jaypixl.artipelagocore.events.data;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -25,7 +29,17 @@ public final class EventSavedData extends SavedData {
         EventSavedData data = create();
         for (Tag value : tag.getList("events", Tag.TAG_STRING)) {
             try {
-                ScheduledEvent event = GSON.fromJson(value.getAsString(), ScheduledEvent.class);
+                JsonElement eventJson = JsonParser.parseString(value.getAsString());
+                if (eventJson.isJsonObject()) {
+                    JsonObject eventObject = eventJson.getAsJsonObject();
+                    JsonElement description = eventObject.get("description");
+                    if (description != null && description.isJsonPrimitive()) {
+                        JsonArray descriptions = new JsonArray();
+                        descriptions.add(description.getAsString());
+                        eventObject.add("description", descriptions);
+                    }
+                }
+                ScheduledEvent event = GSON.fromJson(eventJson, ScheduledEvent.class);
                 if (event != null) data.events.put(event.id(), event);
             } catch (RuntimeException ignored) { }
         }
