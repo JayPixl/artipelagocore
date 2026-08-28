@@ -9,6 +9,7 @@ import io.jaypixl.artipelagocore.events.config.EventConfigManager;
 import io.jaypixl.artipelagocore.events.data.EventSavedData;
 import io.jaypixl.artipelagocore.events.data.ScheduledEvent;
 import io.jaypixl.artipelagocore.events.runtime.EventManager;
+import io.jaypixl.artipelagocore.events.runtime.EventAnnouncements;
 import io.jaypixl.artipelagocore.events.runtime.EventScheduler;
 import io.jaypixl.artipelagocore.events.runtime.SpawnEffectOverlay;
 import net.minecraft.commands.CommandSourceStack;
@@ -60,13 +61,17 @@ public final class EventCommands {
                 now, now + minutes * 60_000L, preset.effects, presetId);
         EventSavedData.get(context.getSource().getServer().overworld()).add(event);
         SpawnEffectOverlay.refresh(context.getSource().getServer());
+        EventAnnouncements.announceStart(context.getSource().getServer(), event);
         context.getSource().sendSuccess(() -> Component.literal("Started '" + preset.name + "' for " + minutes + " minutes."), true);
         return 1;
     }
     private static int stop(CommandContext<CommandSourceStack> context) {
         String presetId = StringArgumentType.getString(context, "preset");
-        int stopped = EventSavedData.get(context.getSource().getServer().overworld()).removeByPreset(presetId);
+        EventSavedData data = EventSavedData.get(context.getSource().getServer().overworld());
+        List<ScheduledEvent> stoppedEvents = data.getAll().stream().filter(event -> event.recurringId().equals(presetId)).toList();
+        int stopped = data.removeByPreset(presetId);
         SpawnEffectOverlay.refresh(context.getSource().getServer());
+        stoppedEvents.forEach(event -> EventAnnouncements.announceEnd(context.getSource().getServer(), event));
         context.getSource().sendSuccess(() -> Component.literal(stopped == 0 ? "No active instances of '" + presetId + "'." : "Stopped " + stopped + " instance(s) of '" + presetId + "'."), true);
         return stopped;
     }

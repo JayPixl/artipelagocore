@@ -29,8 +29,13 @@ public final class EventScheduler {
             long[] window = getWindow(schedule, now);
             if (window == null || now < window[0] || now >= window[1]) continue;
             String id = "schedule-" + index + "-" + window[0];
-            if (!data.contains(id)) data.add(new ScheduledEvent(id, preset.name, preset.description, window[0], window[1], preset.effects, schedule.preset));
+            if (!data.contains(id)) {
+                ScheduledEvent event = new ScheduledEvent(id, preset.name, preset.description, window[0], window[1], preset.effects, schedule.preset);
+                data.add(event);
+                EventAnnouncements.announceStart(server, event);
+            }
         }
+        data.getAll().stream().filter(event -> event.endTime() <= now).forEach(event -> EventAnnouncements.announceEnd(server, event));
         data.removeExpired(now);
         SpawnEffectOverlay.refresh(server);
     }
@@ -50,6 +55,12 @@ public final class EventScheduler {
             return new long[] { start.toInstant().toEpochMilli(), end.toInstant().toEpochMilli() };
         } catch (RuntimeException exception) { ArtipelagoCoreMod.LOGGER.error("Invalid event schedule for preset {}", schedule.preset, exception); return null; }
     }
-    public static void shutdown(MinecraftServer server) { enabled = false; EventSavedData.get(server.overworld()).clear(); SpawnEffectOverlay.refresh(server); }
+    public static void shutdown(MinecraftServer server) {
+        enabled = false;
+        EventSavedData data = EventSavedData.get(server.overworld());
+        data.getAll().forEach(event -> EventAnnouncements.announceEnd(server, event));
+        data.clear();
+        SpawnEffectOverlay.refresh(server);
+    }
     public static void reload(MinecraftServer server) { enabled = true; EventConfigManager.load(); refresh(server); }
 }
