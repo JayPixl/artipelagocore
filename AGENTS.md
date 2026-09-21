@@ -39,7 +39,7 @@ Effect schema source of truth: `schemas.txt` + `EventEffect.java`. Date format f
 1. Auto tests run, results reported (pass/fail + command output).
 2. Manual client checklist prepared for the user.
 3. After user confirms testing: bump version in `build.gradle.kts` (with confirmation), add `CHANGELOG.md` entry under the new version, merge branch to `master`.
-4. Release: tag `vX.Y.Z` to trigger the CurseForge upload Action. Plain merges without a tag are not uploaded.
+4. Release: tag `vX.Y.Z` to trigger `.github/workflows/release.yml`, which builds the JAR and uploads it to CurseForge. Plain merges without a tag are not uploaded. Required secrets: `CURSEFORGE_TOKEN`, `CURSEFORGE_PROJECT_ID`.
 
 ## Cancelled scope
 

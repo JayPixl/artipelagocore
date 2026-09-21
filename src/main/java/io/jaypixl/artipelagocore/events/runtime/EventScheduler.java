@@ -40,6 +40,11 @@ public final class EventScheduler {
         SpawnEffectOverlay.refresh(server);
     }
     private static long[] getWindow(EventConfig.Schedule schedule, long now) {
+        return window(schedule, now);
+    }
+
+    /** Package-private pure time math, exposed for unit tests. */
+    static long[] window(EventConfig.Schedule schedule, long now) {
         try {
             if ("once".equals(schedule.type)) return new long[] {
                     LocalDateTime.parse(schedule.start, ONCE_DATE_TIME_FORMAT).toInstant(ZoneOffset.UTC).toEpochMilli(),
