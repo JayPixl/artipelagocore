@@ -44,3 +44,13 @@ Effect schema source of truth: `schemas.txt` + `EventEffect.java`. Date format f
 ## Cancelled scope
 
 CobbledARC / ARC integration is cancelled. Do not reintroduce `arcintegration` code or docs. The commented ARC lines in `ArtipelagoCoreMod.java` were removed with this change.
+
+## Agent skills
+
+### Issue tracker
+
+Issues live as local markdown files under `.scratch/<feature>/`. See `docs/agents/issue-tracker.md`.
+
+### Domain docs
+
+Single-context: root `CONTEXT.md` plus `docs/adr/`. See `docs/agents/domain.md`.
