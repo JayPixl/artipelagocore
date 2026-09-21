@@ -1,18 +1,21 @@
 # Changelog
 
+Entries are player/operator-facing only. Internal process is recorded in commit messages and `docs/adr/`.
+
 ## [Unreleased]
+
+## [0.3.3] - 2026-09-21
+
+- Cleaned up release notes to list player-facing changes only.
 
 ## [0.3.2] - 2026-09-21
 
-- Release workflow now uploads `CHANGELOG.md` as the CurseForge changelog.
+- CurseForge releases now include these release notes.
 
 ## [0.3.1] - 2026-09-21
 
-- Removed cancelled CobbledARC / ARC integration docs and dead commented code.
-- Added `CONTEXT.md`, `AGENTS.md`, and `docs/adr/` for AI-assisted development.
-- Added JUnit coverage for `ScheduledEvent` validation and `EventScheduler` time windows (`src/test/`).
-- Added tag-gated release workflow (`.github/workflows/release.yml`); requires `CURSEFORGE_TOKEN` + `CURSEFORGE_PROJECT_ID` secrets.
-- Tightened `AGENTS.md` release ordering: CONTEXT/AGENTS updates, version bump, and changelog entry must land on-branch before merge.
+- Removed the cancelled CobbledARC feature and its documentation.
+- Releases are now published to CurseForge only from `vX.Y.Z` tags; plain updates are not uploaded.
 
 ## [0.3.0] - 2026-09-21
 
