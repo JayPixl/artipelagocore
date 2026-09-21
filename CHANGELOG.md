@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+## [0.3.2] - 2026-09-21
+
+- Release workflow now uploads `CHANGELOG.md` as the CurseForge changelog.
+
 ## [0.3.1] - 2026-09-21
 
 - Removed cancelled CobbledARC / ARC integration docs and dead commented code.

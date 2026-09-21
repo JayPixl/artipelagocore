@@ -35,5 +35,6 @@ jobs:
           name: Artipelago Core ${{ github.ref_name }}
           version: ${{ github.ref_name }}
           version-type: release
+          changelog-file: CHANGELOG.md
           loaders: neoforge
           game-versions: 1.21.1
