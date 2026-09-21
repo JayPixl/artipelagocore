@@ -1,9 +1,8 @@
 package io.jaypixl.artipelagocore.events.runtime;
 
-import com.cobblemon.mod.common.Cobblemon;
 import com.cobblemon.mod.common.api.pokemon.PokemonProperties;
+import com.cobblemon.mod.common.api.spawning.BestSpawner;
 import com.cobblemon.mod.common.api.spawning.CobblemonSpawnPools;
-import com.cobblemon.mod.common.api.spawning.SpawnBucket;
 import com.cobblemon.mod.common.api.spawning.SpawnLoader;
 import com.cobblemon.mod.common.api.spawning.detail.PokemonSpawnDetail;
 import com.cobblemon.mod.common.api.spawning.detail.SpawnDetail;
@@ -15,6 +14,7 @@ import io.jaypixl.artipelagocore.events.effect.EventEffect;
 import net.minecraft.server.MinecraftServer;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,7 +22,7 @@ import java.util.Map;
 /** Rebuilds temporary world-spawn changes from Cobblemon's unmodified state. */
 public final class SpawnEffectOverlay {
     private static final Map<SpawnDetail, Float> BASE_WEIGHTS = new IdentityHashMap<>();
-    private static final Map<SpawnBucket, Float> BASE_BUCKET_WEIGHTS = new IdentityHashMap<>();
+    private static final Map<String, Float> BASE_BUCKET_WEIGHTS = new HashMap<>();
     private static final List<SpawnDetail> INJECTED_SPAWNS = new ArrayList<>();
 
     private SpawnEffectOverlay() { }
@@ -40,9 +40,9 @@ public final class SpawnEffectOverlay {
         }
         for (EventEffect effect : EventManager.getActiveEffects(server, "modify_global_bucket_weights")) {
             for (EventEffect.BucketAssignment assignment : effect.buckets) {
-                BASE_BUCKET_WEIGHTS.keySet().stream()
-                        .filter(bucket -> bucket.getName().equals(assignment.bucket))
-                        .forEach(bucket -> bucket.setWeight((float) assignment.weight));
+                if (BASE_BUCKET_WEIGHTS.containsKey(assignment.bucket)) {
+                    BestSpawner.INSTANCE.getConfig().getWorldBuckets().put(assignment.bucket, (float) assignment.weight);
+                }
             }
         }
         for (EventEffect effect : EventManager.getActiveEffects(server, "add_spawns")) {
@@ -58,7 +58,7 @@ public final class SpawnEffectOverlay {
 
     private static void restore(SpawnPool pool) {
         BASE_WEIGHTS.forEach(SpawnDetail::setWeight);
-        BASE_BUCKET_WEIGHTS.forEach(SpawnBucket::setWeight);
+        BestSpawner.INSTANCE.getConfig().getWorldBuckets().putAll(BASE_BUCKET_WEIGHTS);
         pool.getDetails().removeAll(INJECTED_SPAWNS);
         if (!INJECTED_SPAWNS.isEmpty()) pool.precalculate();
         BASE_WEIGHTS.clear();
@@ -68,9 +68,7 @@ public final class SpawnEffectOverlay {
 
     private static void snapshot(SpawnPool pool) {
         for (SpawnDetail detail : pool.getDetails()) BASE_WEIGHTS.put(detail, detail.getWeight());
-        for (SpawnBucket bucket : Cobblemon.INSTANCE.getBestSpawner().getConfig().getBuckets()) {
-            BASE_BUCKET_WEIGHTS.put(bucket, bucket.getWeight());
-        }
+        BASE_BUCKET_WEIGHTS.putAll(BestSpawner.INSTANCE.getConfig().getWorldBuckets());
     }
 
     private static boolean matches(EventEffect effect, SpawnDetail detail) {

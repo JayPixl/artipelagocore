@@ -7,7 +7,7 @@ plugins {
 
 
 group = "io.github.jaypixl"
-version = "0.2.8"
+version = "0.3.0"
 
 architectury {
     platformSetupLoomIde()
@@ -33,7 +33,7 @@ dependencies {
     mappings(loom.officialMojangMappings())
     neoForge("net.neoforged:neoforge:21.1.230") // prev 21.1.182
 
-    modImplementation("com.cobblemon:neoforge:1.7.3+1.21.1")
+    modImplementation("com.cobblemon:neoforge:1.8.0+1.21.1")
     //Needed for cobblemon
     implementation("thedarkcolour:kotlinforforge-neoforge:5.10.0") {
         exclude("net.neoforged.fancymodloader", "loader")
@@ -47,7 +47,7 @@ dependencies {
     //modImplementation("curse.maven:arc-lib-883593:8125132")
     //modImplementation("curse.maven:item-restrictions-887774:8125177")
     //modImplementation("curse.maven:carved-wood-1335174:8437529")
-    modImplementation("curse.maven:cobblemon-occupied-pokeballs-reforged-1561082:8342230")
+    modImplementation("curse.maven:cobblemon-occupied-pokeballs-reforged-1561082:8859871")
 
     modImplementation("curse.maven:forge-config-api-port-547434:7213611")
     //modImplementation("curse.maven:architectury-api-419699:5786327")

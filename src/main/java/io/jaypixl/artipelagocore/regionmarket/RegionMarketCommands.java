@@ -10,19 +10,29 @@ import de.z0rdak.yawp.api.core.ILevelRegionApi;
 import de.z0rdak.yawp.api.core.RegionManager;
 import de.z0rdak.yawp.api.permission.Permissions;
 import de.z0rdak.yawp.core.region.IMarkableRegion;
+import io.github.lightman314.lightmanscurrency.LCText;
+import io.github.lightman314.lightmanscurrency.api.misc.EasyText;
+import io.github.lightman314.lightmanscurrency.api.misc.QuarantineAPI;
 import io.github.lightman314.lightmanscurrency.api.money.bank.IBankAccount;
 import io.github.lightman314.lightmanscurrency.api.money.bank.reference.BankReference;
 import io.github.lightman314.lightmanscurrency.api.money.bank.reference.builtin.PlayerBankReference;
 import io.github.lightman314.lightmanscurrency.api.money.coins.CoinAPI;
 import io.github.lightman314.lightmanscurrency.api.money.value.MoneyValue;
 import io.github.lightman314.lightmanscurrency.api.money.value.builtin.CoinValue;
+import io.github.lightman314.lightmanscurrency.common.menus.ATMMenu;
+import io.github.lightman314.lightmanscurrency.common.menus.validation.EasyMenu;
+import io.github.lightman314.lightmanscurrency.common.menus.validation.types.ItemValidator;
 import io.github.lightman314.lightmanscurrency.common.notifications.types.bank.DepositWithdrawNotification;
 import io.jaypixl.artipelagocore.ArtipelagoCoreMod;
+import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.world.SimpleMenuProvider;
+import net.minecraft.world.item.Item;
 
 import java.util.List;
 import java.util.Objects;
@@ -32,6 +42,12 @@ import java.util.UUID;
 public class RegionMarketCommands {
 
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
+
+        dispatcher.register(
+                Commands.literal("atm")
+                .requires(c -> c.hasPermission(2))
+                        .executes(RegionMarketCommands::openATM)
+        );
 
         dispatcher.register(
                 Commands.literal("regionmarket")
@@ -370,6 +386,15 @@ public class RegionMarketCommands {
                                 " | Cost: $" + listing.getCost() :
                                 " | Owned by: " + level.getPlayerByUUID(UUID.fromString(listing.getOwner())).getName().getString())
         ));
+
+        return 1;
+    }
+
+    private static int openATM(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        ServerPlayer player = ctx.getSource().getPlayerOrException();
+        ServerLevel level = player.serverLevel();
+
+        // Open player's ATM screen
 
         return 1;
     }
