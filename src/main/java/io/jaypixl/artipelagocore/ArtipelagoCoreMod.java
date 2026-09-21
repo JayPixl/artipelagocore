@@ -2,11 +2,6 @@ package io.jaypixl.artipelagocore;
 
 import com.cobblemon.mod.common.CobblemonItems;
 import com.mojang.logging.LogUtils;
-//import io.jaypixl.artipelagocore.arcintegration.action.ACActionDataTypes;
-//import io.jaypixl.artipelagocore.arcintegration.action.ACActionTypes;
-//import io.jaypixl.artipelagocore.arcintegration.condition.ACConditionTypes;
-//import io.jaypixl.artipelagocore.arcintegration.event.ACArcEvents;
-//import io.jaypixl.artipelagocore.arcintegration.reward.ACRewardTypes;
 import io.jaypixl.artipelagocore.item.ModItems;
 import io.jaypixl.artipelagocore.events.command.EventCommands;
 import io.jaypixl.artipelagocore.events.runtime.EventModuleEvents;
@@ -37,15 +32,8 @@ public final class ArtipelagoCoreMod {
         SpawnEffectEvents.register();
         PokemonProgressionEffectEvents.register();
         NeoForge.EVENT_BUS.register(PlayerXpEffectEvents.class);
-        //NeoForge.EVENT_BUS.register(ACArcEvents.class);
         NeoForge.EVENT_BUS.register(YawpHoeTillFixEvents.class);
         NeoForge.EVENT_BUS.register(YawpVisualFixEvents.class);
-
-//        ACActionDataTypes.init();
-//        ACActionTypes.init();
-//        ACConditionTypes.init();
-//        ACArcEvents.init();
-//        ACRewardTypes.init();
 
         ModItems.register(eventBus);
     }

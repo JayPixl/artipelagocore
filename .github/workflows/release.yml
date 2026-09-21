@@ -1,0 +1,39 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+      - name: Build
+        run: |
+          chmod +x gradlew
+          ./gradlew build
+      - name: Upload JAR artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: artipelago-${{ github.ref_name }}
+          path: build/libs/*.jar
+      - name: Publish to CurseForge
+        if: secrets.CURSEFORGE_TOKEN != ''
+        uses: Kir-Antipov/mc-publish@v3.3
+        with:
+          curseforge-id: ${{ secrets.CURSEFORGE_PROJECT_ID }}
+          curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
+          files-primary: build/libs/*.jar
+          name: Artipelago Core ${{ github.ref_name }}
+          version: ${{ github.ref_name }}
+          version-type: release
+          loaders: neoforge
+          game-versions: 1.21.1
