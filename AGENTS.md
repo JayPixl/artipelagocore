@@ -3,7 +3,7 @@
 ## Project
 
 Artipelago Core (`artipelago`) — NeoForge 1.21.1 mod for the Artipelago Cobblemon server.
-Version lives in `build.gradle.kts` (`version = "0.3.0"`). See `CONTEXT.md` for canonical terms.
+Version lives in `build.gradle.kts` (`version = "0.3.1"`). See `CONTEXT.md` for canonical terms.
 
 ## Module map
 
