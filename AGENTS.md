@@ -38,7 +38,7 @@ Effect schema source of truth: `schemas.txt` + `EventEffect.java`. Date format f
 
 1. Auto tests run, results reported (pass/fail + command output).
 2. Manual client checklist prepared for the user.
-3. Before merge, the branch itself must include: any `CONTEXT.md`/`AGENTS.md` updates the spec required, the version bump in `build.gradle.kts`, and the `CHANGELOG.md` entry moved out of `[Unreleased]`. `CHANGELOG.md` entries are player/operator-facing only; internal process goes in commit messages and `docs/adr/`. Only merge after the user confirms testing and reviews those three.
+3. Before merge, the branch itself must include: any `CONTEXT.md`/`AGENTS.md` updates the spec required, the version bump in `build.gradle.kts`, and the versioned `CHANGELOG.md` entry (no `[Unreleased]` section; add released sections directly). `CHANGELOG.md` entries are player/operator-facing only; internal process goes in commit messages and `docs/adr/`. Only merge after the user confirms testing and reviews those three.
 4. Release: tag `vX.Y.Z` to trigger `.github/workflows/release.yml`, which builds the JAR and uploads it to CurseForge. Plain merges without a tag are not uploaded. Required secrets: `CURSEFORGE_TOKEN`, `CURSEFORGE_PROJECT_ID`.
 
 ## Cancelled scope
