@@ -33,3 +33,7 @@ common/src/main/resources/assets/cobblemon/showdown
 # Generated files
 */generated/resources/*
 /fabric/src/generated/resources/cobblemon-common.accesswidener
+
+# Local-only (never commit)
+com/
+.scratch/
