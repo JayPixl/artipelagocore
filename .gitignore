@@ -37,3 +37,7 @@ common/src/main/resources/assets/cobblemon/showdown
 # Local-only (never commit)
 com/
 .scratch/
+
+schemas.txt
+.agents
+skills-lock.json
