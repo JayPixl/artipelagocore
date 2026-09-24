@@ -16,6 +16,24 @@ architectury {
 
 loom {
     silentMojangMappingsLicense()
+
+    // Second dev client so two game instances can run side by side
+    // (multiplayer / trading / party testing). Each client gets its own
+    // run dir (avoids world/file locks) and username (avoids duplicate
+    // player names and offline UUIDs).
+    // Launch in two terminals: ./gradlew runClient  +  ./gradlew runClient2
+    runs {
+        named("client") {
+            programArg("--username=Dev1")
+        }
+        create("client2") {
+            client()
+            configName = "Minecraft Client 2"
+            runDir = "run-client2"
+            programArg("--username=Dev2")
+            ideConfigGenerated(true)
+        }
+    }
 }
 
 repositories {
