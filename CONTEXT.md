@@ -37,3 +37,21 @@ _Avoid_: Starter plot, Free region
 **Compat Fix**:
 A small patch keeping YAWP or PokeCapsule behavior correct alongside this mod.
 _Avoid_: Hack, Workaround, Patch
+
+### Quest Tracking
+
+**Tracking Scope**:
+The rule selecting which progress store a quest or task writes to.
+_Avoid_: Mode, Team setting
+
+**Solo**:
+A Tracking Scope storing progress on the actor's personal team, isolated even inside a party.
+_Avoid_: Player, Individual, Private
+
+**Team**:
+A Tracking Scope sharing progress on the effective party team, the FTB native behavior.
+_Avoid_: Party, Group, Shared
+
+**Global**:
+A Tracking Scope pooling progress on a fixed server team and fanning completion out to all teams.
+_Avoid_: Server-wide, Public

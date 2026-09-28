@@ -32,8 +32,32 @@ versionRange = "[1.7.2,)"
 ordering = "AFTER"
 side = "BOTH"
 
+[[dependencies.artipelago]]
+modId = "ftblibrary"
+mandatory = true
+versionRange = "[2101.1.36,)"
+ordering = "AFTER"
+side = "BOTH"
+
+[[dependencies.artipelago]]
+modId = "ftbteams"
+mandatory = true
+versionRange = "[2101.1.11,)"
+ordering = "AFTER"
+side = "BOTH"
+
+[[dependencies.artipelago]]
+modId = "ftbquests"
+mandatory = true
+versionRange = "[2101.1.36,)"
+ordering = "AFTER"
+side = "BOTH"
+
 [[mixins]]
 config = "mixins.yawp.json"
 
 [[mixins]]
 config = "mixins.pokecapsuleintegration.json"
+
+[[mixins]]
+config = "mixins.questtracking.json"

@@ -16,6 +16,24 @@ architectury {
 
 loom {
     silentMojangMappingsLicense()
+
+    // Second dev client so two game instances can run side by side
+    // (multiplayer / trading / party testing). Each client gets its own
+    // run dir (avoids world/file locks) and username (avoids duplicate
+    // player names and offline UUIDs).
+    // Launch in two terminals: ./gradlew runClient  +  ./gradlew runClient2
+    runs {
+        named("client") {
+            programArg("--username=Dev1")
+        }
+        create("client2") {
+            client()
+            configName = "Minecraft Client 2"
+            runDir = "run-client2"
+            programArg("--username=Dev2")
+            ideConfigGenerated(true)
+        }
+    }
 }
 
 repositories {
@@ -25,6 +43,7 @@ repositories {
     maven("https://hub.spigotmc.org/nexus/content/groups/public/")
     maven("https://thedarkcolour.github.io/KotlinForForge/")
     maven("https://maven.neoforged.net/releases")
+    maven("https://maven.ftb.dev/releases")
     maven("https://cursemaven.com")
 }
 
@@ -44,6 +63,10 @@ dependencies {
     modImplementation("curse.maven:yawp-663276:8034329")
     modImplementation("curse.maven:lightmans-currency-472521:8366260")
     modImplementation("curse.maven:cobblemon-occupied-pokeballs-reforged-1561082:8859871")
+
+    modImplementation("dev.ftb.mods:ftb-quests-neoforge:2101.1.36")
+    modImplementation("dev.ftb.mods:ftb-library-neoforge:2101.1.36")
+    modImplementation("dev.ftb.mods:ftb-teams-neoforge:2101.1.11")
 
     modImplementation("curse.maven:forge-config-api-port-547434:7213611")
 }
