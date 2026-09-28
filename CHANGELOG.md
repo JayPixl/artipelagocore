@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.4.0] - 2026-09-28
+
+- Added Pasture Teaching: pasture a Cobblemon holding a Mirror Herb alongside one that knows the move in its selected moves to teach one Egg Move into learned moves after 5–15 minutes (tunable via `eggmoves.json`; `/eggmoves reload` applies changes).
+
 ## [0.3.1] - 2026-09-21
 
 - Removed the cancelled CobbledARC feature and its documentation.

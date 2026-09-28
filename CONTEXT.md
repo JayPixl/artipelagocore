@@ -32,6 +32,24 @@ _Avoid_: Entry, Plot, Sale
 A Listing claimable for free once per player as starter housing.
 _Avoid_: Starter plot, Free region
 
+### Egg Moves
+
+**Egg Move**:
+A move a species can receive through ancestry, from its egg pool.
+_Avoid_: Tutor move, TM move
+
+**Teacher**:
+A pastured Cobblemon that knows a move in its selected moves and acts as the source.
+_Avoid_: Parent, Donor
+
+**Student**:
+A pastured Cobblemon holding a Mirror Herb that receives into its learned moves.
+_Avoid_: Learner, Child
+
+**Pasture Teaching**:
+The timed pasture process where a Student learns one Egg Move from a Teacher.
+_Avoid_: Breeding, Copying
+
 ### Compat
 
 **Compat Fix**:

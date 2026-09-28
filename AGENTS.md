@@ -12,6 +12,7 @@ Version lives in `build.gradle.kts` (`version = "0.3.1"`). See `CONTEXT.md` for 
 - `events/runtime/` — `EventScheduler`, `EventManager`, `EventModuleEvents`, effect appliers (`SpawnEffect*`, `PlayerXpEffect*`, `PokemonProgressionEffect*`), `EventAnnouncements`
 - `events/command/` — `EventCommands` (`/events list|start|stop|shutdown|reload`)
 - `events/effect/` — `EventEffect` (typed JSON bonus, shape varies per type; see `schemas.txt`)
+- `eggmoves/` — `EggMovesConfig(Manager)` (`config/artipelago/eggmoves.json`), `EggMoveTeaching` (pure eligibility + timing), `PastureTeachingService` (slow-tick pasture teach), `EggMovesCommands` (`/eggmoves reload`), `EggMovesModuleEvents`
 - `regionmarket/` — `RegionMarketCommands` (`/regionmarket add|remove|list|buy|info|claimstarterhousing`, `/atm`), `RegionMarketSavedData`, `RegionMarketEntry`, `RegionMarketEvents`
 - `yawp/` + `yawp/mixin/` — compat fixes (visual sync, hoe-till, fluid placement guard)
 - `pokecapsuleintegration/mixin/` — occupied-pokeball placement patch
