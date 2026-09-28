@@ -3,6 +3,8 @@ package io.jaypixl.artipelagocore;
 import com.cobblemon.mod.common.CobblemonItems;
 import com.mojang.logging.LogUtils;
 import io.jaypixl.artipelagocore.item.ModItems;
+import io.jaypixl.artipelagocore.eggmoves.command.EggMovesCommands;
+import io.jaypixl.artipelagocore.eggmoves.runtime.EggMovesModuleEvents;
 import io.jaypixl.artipelagocore.events.command.EventCommands;
 import io.jaypixl.artipelagocore.events.runtime.EventModuleEvents;
 import io.jaypixl.artipelagocore.events.runtime.SpawnEffectEvents;
@@ -29,6 +31,7 @@ public final class ArtipelagoCoreMod {
         NeoForge.EVENT_BUS.register(ArtipelagoCoreMod.class);
         NeoForge.EVENT_BUS.register(RegionMarketEvents.class);
         NeoForge.EVENT_BUS.register(EventModuleEvents.class);
+        NeoForge.EVENT_BUS.register(EggMovesModuleEvents.class);
         SpawnEffectEvents.register();
         PokemonProgressionEffectEvents.register();
         NeoForge.EVENT_BUS.register(PlayerXpEffectEvents.class);
@@ -42,6 +45,7 @@ public final class ArtipelagoCoreMod {
     public static void onCommandRegistration(final RegisterCommandsEvent event) {
         RegionMarketCommands.register(event.getDispatcher());
         EventCommands.register(event.getDispatcher());
+        EggMovesCommands.register(event.getDispatcher());
     }
 
 }
