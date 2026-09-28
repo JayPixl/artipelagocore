@@ -1,0 +1,33 @@
+{
+  "required": true,
+  "package": "io.jaypixl.artipelagocore.questtracking.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "QuestTrackingMixin",
+    "TaskTrackingMixin",
+    "SubmitStoreMixin",
+    "ForceProgressStoreMixin",
+    "RewardResetStoreMixin",
+    "QuestResetFanoutMixin",
+    "KillAttributionMixin",
+    "GlobalFanoutMixin",
+    "GlobalCatchUpMixin",
+    "ClaimStoreMixin",
+    "ClaimAllStoreMixin",
+    "PersonalSnapshotMixin",
+    "PersonalTeamChangeMixin",
+    "RepeatStateMixin",
+    "TeamDataProgressAccessor"
+  ],
+  "client": [
+    "ClaimButtonMixin",
+    "TaskButtonDisplayMixin",
+    "QuestButtonDisplayMixin",
+    "ViewQuestPanelDisplayMixin",
+    "PersonalSyncMixin"
+  ],
+  "server": [],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
