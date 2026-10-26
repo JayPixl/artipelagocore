@@ -3,7 +3,15 @@
 ## Project
 
 Artipelago Core (`artipelago`) — NeoForge 1.21.1 mod for the Artipelago Cobblemon server.
-Version lives in `build.gradle.kts` (`version = "0.3.1"`). See `CONTEXT.md` for canonical terms.
+Version lives in `build.gradle.kts` (`version = "0.5.0"`). See `CONTEXT.md` for canonical terms.
+
+## Compatibility
+
+- Minecraft 1.21.1, NeoForge 21.1.248, Java 21.
+- Cobblemon: built against `1.8.3+1.21.1`, declares `[1.8.0,1.9)`. Policy: floor = lowest version actually verified, ceiling = next minor (see `docs/adr/0006-cobblemon-version-policy.md`).
+- KotlinForForge `5.12.0`. Cobblemon requires it at runtime; addons may be compiled with a newer Kotlin than older KFF builds bundle, so keep this in step with the addon ecosystem.
+- Occupied Poké Balls: upstream `curse.maven:cobblemon-occupied-pokeballs-1508508:<fileId>` (MIT), replacing the deprecated `cobblemon-occupied-pokeballs-reforged` port. Same modId and `com.pokecapsule` package; the placement guard mixins into `com.pokecapsule.event.PlaceBallHandler#onUseBlock` (upstream removed `placeBlock`).
+- Deployment: the production server ran Cobblemon 1.8.2 and moved to 1.8.3 with 0.5.0. **The server is not live yet**; no 1.7.x support is required.
 
 ## Module map
 
@@ -15,7 +23,7 @@ Version lives in `build.gradle.kts` (`version = "0.3.1"`). See `CONTEXT.md` for 
 - `eggmoves/` — `EggMovesConfig(Manager)` (`config/artipelago/eggmoves.json`), `EggMoveTeaching` (pure eligibility + timing), `PastureTeachingService` (slow-tick pasture teach), `EggMovesCommands` (`/eggmoves reload`), `EggMovesModuleEvents`
 - `regionmarket/` — `RegionMarketCommands` (`/regionmarket add|remove|list|buy|info|claimstarterhousing`, `/atm`), `RegionMarketSavedData`, `RegionMarketEntry`, `RegionMarketEvents`
 - `yawp/` + `yawp/mixin/` — compat fixes (visual sync, hoe-till, fluid placement guard)
-- `pokecapsuleintegration/mixin/` — occupied-pokeball placement patch
+- `pokecapsuleintegration/mixin/` — occupied-pokéball placement patch for Cobblemon Occupied Pokéballs (upstream mod, `com.pokecapsule`)
 - `item/` — `ModItems` crafting ingredients (raw chunks, shards)
 - `ArtipelagoCoreMod.java` — mod entry point, event bus + command registration
 

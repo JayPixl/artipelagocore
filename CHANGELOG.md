@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.5.0] - 2026-10-26
+
+- Updated for Cobblemon 1.8.3. The mod now requires Cobblemon 1.8.x and no longer loads on 1.7.x.
+- Replaced the PokeCapsule occupied-Poké Ball port with the official Cobblemon Occupied Poké Balls mod. Occupied balls still cannot be placed in regions where block placement is denied, and unrelated right-clicks are unaffected.
+- Updated to NeoForge 21.1.248 and KotlinForForge 5.12.0.
+
 ## [0.4.0] - 2026-09-28
 
 - Added Pasture Teaching: pasture a Cobblemon holding a Mirror Herb alongside one that knows the move in its selected moves to teach one Egg Move into learned moves after 5–15 minutes (tunable via `eggmoves.json`; `/eggmoves reload` applies changes).

@@ -1,6 +1,5 @@
 package io.jaypixl.artipelagocore;
 
-import com.cobblemon.mod.common.CobblemonItems;
 import com.mojang.logging.LogUtils;
 import io.jaypixl.artipelagocore.item.ModItems;
 import io.jaypixl.artipelagocore.eggmoves.command.EggMovesCommands;
