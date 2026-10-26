@@ -19,6 +19,33 @@ jobs:
         with:
           distribution: temurin
           java-version: 21
+      - name: Verify tag, build version and changelog agree
+        if: startsWith(github.ref, 'refs/tags/')
+        run: |
+          version="${GITHUB_REF_NAME#v}"
+          if ! grep -qxF "version = \"${version}\"" build.gradle.kts; then
+            echo "::error::build.gradle.kts version does not match tag ${GITHUB_REF_NAME}"
+            exit 1
+          fi
+          if ! grep -qF "## [${version}]" CHANGELOG.md; then
+            echo "::error::CHANGELOG.md has no '## [${version}]' section for ${GITHUB_REF_NAME}"
+            exit 1
+          fi
+      - name: Extract release notes
+        if: startsWith(github.ref, 'refs/tags/')
+        run: |
+          version="${GITHUB_REF_NAME#v}"
+          awk -v ver="$version" '
+            index($0, "## [" ver "]") == 1 { capture = 1; next }
+            capture && index($0, "## [") == 1 { exit }
+            capture { print }
+          ' CHANGELOG.md | sed -e 's/[[:space:]]*$//' -e '1{/^$/d}' > release-notes.md
+          if ! grep -q '[^[:space:]]' release-notes.md; then
+            echo "::error::release notes extracted for ${version} are empty"
+            exit 1
+          fi
+          echo "--- CurseForge changelog for ${GITHUB_REF_NAME} ---"
+          cat release-notes.md
       - name: Build
         run: |
           chmod +x gradlew
@@ -38,6 +65,6 @@ jobs:
           name: Artipelago Core ${{ github.ref_name }}
           version: ${{ github.ref_name }}
           version-type: release
-          changelog-file: CHANGELOG.md
+          changelog-file: release-notes.md
           loaders: neoforge
           game-versions: 1.21.1

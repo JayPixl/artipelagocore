@@ -36,6 +36,7 @@ Effect schema source of truth: `schemas.txt` + `EventEffect.java`. Date format f
 - Gate 1 — start: spec confirmed + branch created.
 - Gate 2 — version bump: ask before touching `build.gradle.kts` or `CHANGELOG.md`.
 - Gate 3 — merge/tag: ask before merge; report auto-test results + manual checklist first.
+- Gate 4 — release notes: **before tagging, read the `CHANGELOG.md` section for the release version and confirm it is what CurseForge should show.** The workflow extracts only that section and uploads it as the changelog; it also refuses to publish if the section is missing or does not match `build.gradle.kts` / the tag. Check all three agree: tag `vX.Y.Z`, `version = "X.Y.Z"`, `## [X.Y.Z] - YYYY-MM-DD`.
 
 ## Build and verify
 
@@ -48,7 +49,7 @@ Effect schema source of truth: `schemas.txt` + `EventEffect.java`. Date format f
 1. Auto tests run, results reported (pass/fail + command output).
 2. Manual client checklist prepared for the user.
 3. Before merge, the branch itself must include: any `CONTEXT.md`/`AGENTS.md` updates the spec required, the version bump in `build.gradle.kts`, and the versioned `CHANGELOG.md` entry (no `[Unreleased]` section; add released sections directly). `CHANGELOG.md` entries are player/operator-facing only; internal process goes in commit messages and `docs/adr/`. Only merge after the user confirms testing and reviews those three.
-4. Release: tag `vX.Y.Z` to trigger `.github/workflows/release.yml`, which builds the JAR and uploads it to CurseForge. Plain merges without a tag are not uploaded. Required secrets: `CURSEFORGE_TOKEN`, `CURSEFORGE_PROJECT_ID`.
+4. Release: tag `vX.Y.Z` to trigger `.github/workflows/release.yml`, which builds the JAR and uploads it to CurseForge. Plain merges without a tag are not uploaded. Required secrets: `CURSEFORGE_TOKEN`, `CURSEFORGE_PROJECT_ID`. The workflow uploads **only** the `## [X.Y.Z]` section of `CHANGELOG.md` as the CurseForge changelog (never the whole file) and fails if that section is missing, empty, or disagrees with the tag/build version — so a bad changelog blocks the upload instead of publishing wrong notes.
 
 ## Cancelled scope
 
