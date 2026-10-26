@@ -7,7 +7,7 @@ plugins {
 
 
 group = "io.github.jaypixl"
-version = "0.4.0"
+version = "0.5.0"
 
 architectury {
     platformSetupLoomIde()
@@ -50,11 +50,11 @@ repositories {
 dependencies {
     minecraft("net.minecraft:minecraft:1.21.1")
     mappings(loom.officialMojangMappings())
-    neoForge("net.neoforged:neoforge:21.1.230") // prev 21.1.182
+    neoForge("net.neoforged:neoforge:21.1.248") // prev 21.1.230
 
-    modImplementation("com.cobblemon:neoforge:1.8.0+1.21.1")
+    modImplementation("com.cobblemon:neoforge:1.8.3+1.21.1")
     //Needed for cobblemon
-    implementation("thedarkcolour:kotlinforforge-neoforge:5.10.0") {
+    implementation("thedarkcolour:kotlinforforge-neoforge:5.12.0") {
         exclude("net.neoforged.fancymodloader", "loader")
     }
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.0")
@@ -62,7 +62,7 @@ dependencies {
 
     modImplementation("curse.maven:yawp-663276:8034329")
     modImplementation("curse.maven:lightmans-currency-472521:8366260")
-    modImplementation("curse.maven:cobblemon-occupied-pokeballs-reforged-1561082:8859871")
+    modImplementation("curse.maven:cobblemon-occupied-pokeballs-1508508:9148916")
 
     modImplementation("dev.ftb.mods:ftb-quests-neoforge:2101.1.36")
     modImplementation("dev.ftb.mods:ftb-library-neoforge:2101.1.36")

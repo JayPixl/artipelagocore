@@ -1,11 +1,19 @@
 This is a collection of QoL and management mods for the upcoming Artipelago Cobblemon server. You are free to download but it is tailored for our specific use cases. Stay tuned for the server launch coming soon!
 
+## Requirements
+
+- Minecraft 1.21.1
+- NeoForge 21.1.248 or newer
+- Cobblemon 1.8.x (1.8.0 up to, but not including, 1.9)
+- KotlinForForge 5.12.0
+- Cobblemon Occupied Poké Balls, YAWP, Lightman's Currency, and FTB Quests/Library/Teams for the modules that use them
+
 # Features
 - Region Market module bridging YAWP and Lightman's Currency (`/regionmarket`, `/atm`)
 - Events module with JSON presets, weekly/one-time schedules, and typed gameplay effects (`/events`)
 - YAWP compat fixes (visual sync, hoe-till, fluid placement guard)
 - Custom crafting ingredients (raw copper/iron/gold chunks, lapis/emerald/diamond shards)
-- PokeCapsule occupied-pokeball placement compat
+- Cobblemon Occupied Poké Balls placement compat
 
 See `AGENTS.md` for the module map and agent workflow, and `CONTEXT.md` for canonical terms.
 
