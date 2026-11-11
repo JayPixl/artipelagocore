@@ -1,5 +1,7 @@
 package io.jaypixl.artipelagocore.questtasks.block;
 
+import io.jaypixl.artipelagocore.questtasks.util.ResourceIds;
+
 import java.util.Collection;
 import java.util.Locale;
 import java.util.regex.Pattern;
@@ -40,7 +42,7 @@ public final class BlockFilter {
      * Shared with the task's config field validation so the editor and the
      * matcher can never drift apart.
      */
-    public static final Pattern CONFIG_PATTERN = Pattern.compile("#?[a-z0-9_.-]+:[a-z0-9_./-]+");
+    public static final Pattern CONFIG_PATTERN = ResourceIds.PATTERN;
 
     private static final BlockFilter NONE = new BlockFilter(Mode.BLOCK, "");
 
@@ -68,14 +70,7 @@ public final class BlockFilter {
     }
 
     private static String normalize(String raw) {
-        if (raw == null) {
-            return "";
-        }
-        String trimmed = raw.trim();
-        if (trimmed.startsWith("#")) {
-            trimmed = trimmed.substring(1).trim();
-        }
-        return CONFIG_PATTERN.matcher(trimmed).matches() ? trimmed : "";
+        return ResourceIds.normalize(raw);
     }
 
     public Mode mode() {

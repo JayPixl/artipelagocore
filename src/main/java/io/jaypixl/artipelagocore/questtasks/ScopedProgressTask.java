@@ -6,6 +6,8 @@ import dev.ftb.mods.ftbquests.quest.task.Task;
 import io.jaypixl.artipelagocore.questtracking.QuestTrackingRouter;
 import net.minecraft.server.level.ServerPlayer;
 
+import java.util.UUID;
+
 /**
  * Base for this mod's counting task types.
  *
@@ -34,5 +36,24 @@ public abstract class ScopedProgressTask extends Task {
             return;
         }
         QuestTrackingRouter.resolveStore(this, data, player).addProgress(this, delta);
+    }
+
+    /**
+     * Adds {@code delta} progress on the store belonging to {@code ownerId},
+     * who may be offline. Used only by owner-credited tasks (Merchant
+     * Transaction): the store cannot come from the event because the event's
+     * store belongs to the customer. No-ops when the owner has no resolvable
+     * store, which is the correct failure mode — falling back to the executor's
+     * store would credit the wrong player.
+     */
+    protected void submitOwnerProgress(UUID ownerId, long delta) {
+        if (ownerId == null || delta <= 0L) {
+            return;
+        }
+        QuestTrackingRouter.resolveStoreForOwner(this, ownerId).ifPresent(data -> {
+            if (checkTaskSequence(data)) {
+                data.addProgress(this, delta);
+            }
+        });
     }
 }

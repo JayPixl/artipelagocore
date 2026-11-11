@@ -61,3 +61,6 @@ config = "mixins.pokecapsuleintegration.json"
 
 [[mixins]]
 config = "mixins.questtracking.json"
+
+[[mixins]]
+config = "mixins.questtasks.json"
