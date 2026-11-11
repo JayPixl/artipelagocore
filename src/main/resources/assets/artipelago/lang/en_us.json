@@ -10,5 +10,16 @@
   "ftbquests.quest.tracking": "Tracking",
   "ftbquests.quest.tracking.tooltip": "Which progress store this quest writes to by default. Tasks can override this individually.",
   "ftbquests.task.tracking": "Tracking",
-  "ftbquests.task.tracking.tooltip": "Which progress store this task writes to. Inherit uses the parent quest's Tracking Scope."
+  "ftbquests.task.tracking.tooltip": "Which progress store this task writes to. Inherit uses the parent quest's Tracking Scope.",
+  "ftbquests.task.artipelago.block_break": "Break Block",
+  "ftbquests.task.artipelago.block_break.value": "Amount",
+  "ftbquests.task.artipelago.block_break.value.tooltip": "How many matching blocks the player has to break.",
+  "ftbquests.task.artipelago.block_break.block_filter": "Block filter",
+  "ftbquests.task.artipelago.block_break.block_filter.tooltip": "Match one block id or one block tag. The field that does not apply is dimmed.",
+  "ftbquests.task.artipelago.block_break.block_filter.block": "Block",
+  "ftbquests.task.artipelago.block_break.block_filter.tag": "Tag",
+  "ftbquests.task.artipelago.block_break.block": "Block",
+  "ftbquests.task.artipelago.block_break.block.tooltip": "Block id, for example minecraft:oak_log.",
+  "ftbquests.task.artipelago.block_break.block_tag": "Block tag",
+  "ftbquests.task.artipelago.block_break.block_tag.tooltip": "Block tag id, with or without the leading #, for example minecraft:logs."
 }

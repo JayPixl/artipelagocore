@@ -11,6 +11,8 @@ import io.jaypixl.artipelagocore.events.runtime.PlayerXpEffectEvents;
 import io.jaypixl.artipelagocore.events.runtime.PokemonProgressionEffectEvents;
 import io.jaypixl.artipelagocore.regionmarket.RegionMarketCommands;
 import io.jaypixl.artipelagocore.regionmarket.RegionMarketEvents;
+import io.jaypixl.artipelagocore.questtasks.QuestTaskTypes;
+import io.jaypixl.artipelagocore.questtasks.block.BlockBreakEvents;
 import io.jaypixl.artipelagocore.yawp.YawpHoeTillFixEvents;
 import io.jaypixl.artipelagocore.yawp.YawpVisualFixEvents;
 import net.neoforged.bus.api.IEventBus;
@@ -36,6 +38,10 @@ public final class ArtipelagoCoreMod {
         NeoForge.EVENT_BUS.register(PlayerXpEffectEvents.class);
         NeoForge.EVENT_BUS.register(YawpHoeTillFixEvents.class);
         NeoForge.EVENT_BUS.register(YawpVisualFixEvents.class);
+
+        // Must run before any quest file loads, on both sides.
+        QuestTaskTypes.register();
+        NeoForge.EVENT_BUS.register(BlockBreakEvents.class);
 
         ModItems.register(eventBus);
     }

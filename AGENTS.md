@@ -22,6 +22,7 @@ Version lives in `build.gradle.kts` (`version = "0.5.0"`). See `CONTEXT.md` for 
 - `events/effect/` — `EventEffect` (typed JSON bonus, shape varies per type; see `schemas.txt`)
 - `eggmoves/` — `EggMovesConfig(Manager)` (`config/artipelago/eggmoves.json`), `EggMoveTeaching` (pure eligibility + timing), `PastureTeachingService` (slow-tick pasture teach), `EggMovesCommands` (`/eggmoves reload`), `EggMovesModuleEvents`
 - `regionmarket/` — `RegionMarketCommands` (`/regionmarket add|remove|list|buy|info|claimstarterhousing`, `/atm`), `RegionMarketSavedData`, `RegionMarketEntry`, `RegionMarketEvents`
+- `questtasks/` — FTB Quests task types this mod registers (`QuestTaskTypes`), their event listeners, and pure filter logic (`questtasks/block/` holds Break Block)
 - `yawp/` + `yawp/mixin/` — compat fixes (visual sync, hoe-till, fluid placement guard)
 - `pokecapsuleintegration/mixin/` — occupied-pokéball placement patch for Cobblemon Occupied Pokéballs (upstream mod, `com.pokecapsule`)
 - `item/` — `ModItems` crafting ingredients (raw chunks, shards)
