@@ -23,6 +23,11 @@ import java.util.UUID;
  * guard is mandatory rather than defensive: late confirmation packets can
  * re-enter {@code tryExecuteTrade} after completion and would otherwise credit
  * the same trade twice.
+ *
+ * <p>{@code completed} only turns true once both participants confirmed, so
+ * declined, cancelled and one-sided confirmation attempts never reach the
+ * credit call. Money is deliberately not snapshotted: {@code /lctrade} money
+ * is out of scope for this task type, which counts item movement only.
  */
 @Mixin(PlayerTrade.class)
 public abstract class PlayerTradeMixin {

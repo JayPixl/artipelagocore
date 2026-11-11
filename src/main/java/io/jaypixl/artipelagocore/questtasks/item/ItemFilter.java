@@ -11,9 +11,10 @@ import java.util.Locale;
  *
  * <p>Pure by design — the caller supplies the item's registry id and the tag
  * ids that contain it, so the matching rules stay unit testable without
- * Minecraft or FTB types. {@link Mode#ANY} is the only mode that matches
- * everything; a blank or malformed {@link Mode#ITEM}/{@link Mode#TAG} target
- * never matches, so an unfinished filtered task cannot complete on any item.
+ * Minecraft or FTB types. {@link Mode#ANY} matches everything. A filtered mode
+ * left blank is unconstrained — transaction tasks treat that as "no
+ * condition" — while a non-blank but malformed target is a typo and never
+ * matches, so it fails closed instead of silently qualifying every item.
  */
 public final class ItemFilter {
 
@@ -39,14 +40,16 @@ public final class ItemFilter {
         }
     }
 
-    private static final ItemFilter ANY = new ItemFilter(Mode.ANY, "");
+    private static final ItemFilter ANY = new ItemFilter(Mode.ANY, "", false);
 
     private final Mode mode;
     private final String target;
+    private final boolean malformed;
 
-    private ItemFilter(Mode mode, String target) {
+    private ItemFilter(Mode mode, String target, boolean malformed) {
         this.mode = mode;
         this.target = target;
+        this.malformed = malformed;
     }
 
     /** A filter that accepts every item and id. */
@@ -56,15 +59,19 @@ public final class ItemFilter {
 
     /**
      * Builds a filter from a configured value, stripping whitespace and one
-     * leading {@code #}. A malformed target becomes empty and therefore never
-     * matches.
+     * leading {@code #}. Blank and {@code #}-only values are an unconstrained
+     * filtered mode; a non-blank value that does not normalize is malformed and
+     * never matches.
      */
     public static ItemFilter of(Mode mode, String raw) {
         Mode effective = mode == null ? Mode.ANY : mode;
         if (effective == Mode.ANY) {
             return ANY;
         }
-        return new ItemFilter(effective, ResourceIds.normalize(raw));
+        String trimmed = raw == null ? "" : raw.trim();
+        boolean blankInput = trimmed.isEmpty() || trimmed.equals("#");
+        String normalized = ResourceIds.normalize(raw);
+        return new ItemFilter(effective, normalized, !blankInput && normalized.isEmpty());
     }
 
     public Mode mode() {
@@ -75,19 +82,23 @@ public final class ItemFilter {
         return target;
     }
 
-    /** True for a filtered mode whose configured target is blank or malformed. */
+    /** True for a filtered mode with no configured target. */
     public boolean isBlank() {
         return mode != Mode.ANY && target.isEmpty();
     }
 
+    /** True when a non-blank configured target failed id validation. */
+    public boolean isMalformed() {
+        return malformed;
+    }
+
     /**
-     * True when this filter imposes no constraint: either an explicit "any"
-     * mode or a filtered mode left blank. Transaction tasks use this to decide
-     * whether a side is a qualifier; the fish and trade-item tasks instead
-     * require a real match and use {@link #matches}.
+     * True when this filter imposes no constraint: an explicit "any" mode or a
+     * filtered mode left blank. A malformed target is constrained and never
+     * matches, so transaction tasks fail closed instead of counting everything.
      */
     public boolean isUnconstrained() {
-        return mode == Mode.ANY || isBlank();
+        return mode == Mode.ANY || (isBlank() && !malformed);
     }
 
     /**
@@ -98,7 +109,7 @@ public final class ItemFilter {
         if (mode == Mode.ANY) {
             return true;
         }
-        if (isBlank() || itemId == null) {
+        if (malformed || isBlank() || itemId == null) {
             return false;
         }
         if (mode == Mode.TAG) {

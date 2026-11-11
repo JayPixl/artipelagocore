@@ -58,6 +58,15 @@ class ItemFilterTest {
     }
 
     @Test
+    void malformedFilteredModeIsConstrainedAndNeverMatches() {
+        ItemFilter malformed = ItemFilter.of(ItemFilter.Mode.ITEM, "cod");
+
+        assertTrue(malformed.isMalformed());
+        assertFalse(malformed.isUnconstrained(), "a typo must not behave like an empty filter");
+        assertFalse(malformed.matches("minecraft:cod", COD_TAGS));
+    }
+
+    @Test
     void whitespaceAndHashPrefixAreNormalized() {
         assertEquals("minecraft:cod", ItemFilter.of(ItemFilter.Mode.ITEM, "  minecraft:cod  ").target());
         assertEquals("minecraft:fishes", ItemFilter.of(ItemFilter.Mode.TAG, "  #minecraft:fishes ").target());

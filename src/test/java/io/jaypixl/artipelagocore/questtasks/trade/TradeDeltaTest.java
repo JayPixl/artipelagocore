@@ -119,6 +119,17 @@ class TradeDeltaTest {
     }
 
     @Test
+    void malformedTransactionFilterFailsClosed() {
+        TradeDelta.Trade record = sale(OAK, 300L);
+        ItemFilter malformed = ItemFilter.of(ItemFilter.Mode.ITEM, "oak_log");
+
+        assertEquals(0L, TradeDelta.compute(record, TransactionCounts.SOLD_ITEMS,
+                malformed, ItemFilter.any(), TradeDelta.Perspective.MERCHANT));
+        assertEquals(0L, TradeDelta.compute(record, TransactionCounts.COINS_RECEIVED,
+                malformed, ItemFilter.any(), TradeDelta.Perspective.MERCHANT));
+    }
+
+    @Test
     void itemCountUsesTheSideFilterQuantities() {
         TradeDelta.Trade barter = new TradeDelta.Trade(List.of(OAK), List.of(COBBLE), 0L, 0L);
         ItemFilter stoneTag = ItemFilter.of(ItemFilter.Mode.TAG, "#minecraft:stone_bricks");

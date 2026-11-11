@@ -26,16 +26,19 @@ public abstract class ScopedProgressTask extends Task {
     /**
      * Adds {@code delta} progress on the store this task resolves for the
      * submitting player. No-ops for a null player or a task whose dependencies
-     * are not complete yet, which is the same gate the built-in tasks use.
+     * are not complete yet on the resolved store, which is the same gate the
+     * built-in tasks apply. The gate runs after routing because a Solo task on
+     * a partied player must check the personal store, not the party store.
      */
     protected void submitProgress(TeamData data, ServerPlayer player, long delta) {
         if (data == null || player == null || delta <= 0L) {
             return;
         }
-        if (!checkTaskSequence(data)) {
+        TeamData store = QuestTrackingRouter.resolveStore(this, data, player);
+        if (store == null || !checkTaskSequence(store)) {
             return;
         }
-        QuestTrackingRouter.resolveStore(this, data, player).addProgress(this, delta);
+        store.addProgress(this, delta);
     }
 
     /**

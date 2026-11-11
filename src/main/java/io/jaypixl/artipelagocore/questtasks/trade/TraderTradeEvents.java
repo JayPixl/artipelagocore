@@ -8,6 +8,7 @@ import io.github.lightman314.lightmanscurrency.api.money.types.builtin.CoinCurre
 import io.github.lightman314.lightmanscurrency.api.money.value.MoneyValue;
 import io.github.lightman314.lightmanscurrency.api.ownership.Owner;
 import io.github.lightman314.lightmanscurrency.api.ownership.builtin.PlayerOwner;
+import io.github.lightman314.lightmanscurrency.api.ownership.builtin.TeamOwner;
 import io.github.lightman314.lightmanscurrency.api.traders.TradeContext;
 import io.github.lightman314.lightmanscurrency.api.traders.TraderData;
 import io.github.lightman314.lightmanscurrency.api.traders.trade.TradeDirection;
@@ -89,22 +90,24 @@ public final class TraderTradeEvents {
             return;
         }
 
-        UUID ownerId = playerOwnerId(trader);
-        if (ownerId != null && ownerId.equals(player.getUUID())) {
+        Owner owner = trader.getOwner().getValidOwner();
+        UUID ownerId = owner instanceof PlayerOwner playerOwner ? playerOwner.player.id : null;
+        TraderOwnership ownership = ownership(owner);
+        if (ownership == TraderOwnership.PLAYER && ownerId != null
+                && ownerId.equals(player.getUUID())) {
             // A trade with your own shop never advances your own tasks.
             return;
         }
-        boolean playerOwned = ownerId != null;
 
-        creditCustomers(file, customerTasks, record, player, playerOwned);
-        creditMerchant(merchantTasks, record, ownerId);
+        creditCustomers(file, customerTasks, record, player, ownership);
+        creditMerchant(merchantTasks, record, ownerId, ownership);
     }
 
     private static void creditCustomers(ServerQuestFile file, List<CustomerTransactionTask> tasks,
-            TradeDelta.Trade record, ServerPlayer player, boolean playerOwned) {
+            TradeDelta.Trade record, ServerPlayer player, TraderOwnership ownership) {
         TeamData data = null;
         for (CustomerTransactionTask task : tasks) {
-            if (!task.allowsTrader(playerOwned)) {
+            if (!task.allowsTrader(ownership)) {
                 continue;
             }
             long delta = task.delta(record, TradeDelta.Perspective.CUSTOMER);
@@ -122,8 +125,8 @@ public final class TraderTradeEvents {
     }
 
     private static void creditMerchant(List<MerchantTransactionTask> tasks,
-            TradeDelta.Trade record, UUID ownerId) {
-        if (ownerId == null) {
+            TradeDelta.Trade record, UUID ownerId, TraderOwnership ownership) {
+        if (ownership != TraderOwnership.PLAYER || ownerId == null) {
             // Server- and team-owned shops have no player owner to credit.
             return;
         }
@@ -135,12 +138,14 @@ public final class TraderTradeEvents {
         }
     }
 
-    private static UUID playerOwnerId(TraderData trader) {
-        Owner owner = trader.getOwner().getValidOwner();
-        if (owner instanceof PlayerOwner playerOwner) {
-            return playerOwner.player.id;
+    private static TraderOwnership ownership(Owner owner) {
+        if (owner instanceof PlayerOwner) {
+            return TraderOwnership.PLAYER;
         }
-        return null;
+        if (owner instanceof TeamOwner) {
+            return TraderOwnership.TEAM;
+        }
+        return TraderOwnership.SERVER;
     }
 
     private static List<ItemStack> stacks(Object value) {

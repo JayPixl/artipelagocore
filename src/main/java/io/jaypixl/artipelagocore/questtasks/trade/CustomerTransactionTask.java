@@ -40,9 +40,13 @@ public class CustomerTransactionTask extends AbstractTransactionTask {
         return allowServerOwned;
     }
 
-    /** Whether a trade at a non-player-owned shop should count for this task. */
-    public boolean allowsTrader(boolean playerOwned) {
-        return playerOwned || allowServerOwned;
+    /**
+     * Whether a trade at this kind of trader counts. Only server-owned
+     * (admin) shops are governed by the checkbox; player- and team-owned shops
+     * always count for the customer.
+     */
+    public boolean allowsTrader(TraderOwnership ownership) {
+        return ownership != TraderOwnership.SERVER || allowServerOwned;
     }
 
     @Override
