@@ -3,7 +3,6 @@ package io.jaypixl.artipelagocore.questtasks.fish;
 import dev.ftb.mods.ftbquests.quest.ServerQuestFile;
 import dev.ftb.mods.ftbquests.quest.TeamData;
 import net.minecraft.core.Holder;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
@@ -70,18 +69,6 @@ public final class FishUpItemEvents {
             }
             task.submitCatch(data, player);
         }
-    }
-
-    /** Registry id of a caught stack's item, used by the task's pure matcher. */
-    public static String itemId(ItemStack stack) {
-        return BuiltInRegistries.ITEM.getKey(stack.getItem()).toString();
-    }
-
-    /** Tag ids containing the caught stack's item. */
-    public static List<String> itemTagIds(ItemStack stack) {
-        return stack.getItem().builtInRegistryHolder().tags()
-                .map(tag -> tag.location().toString())
-                .toList();
     }
 
     /**

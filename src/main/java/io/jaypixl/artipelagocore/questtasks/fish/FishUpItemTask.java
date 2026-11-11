@@ -11,6 +11,7 @@ import dev.ftb.mods.ftbquests.quest.task.TaskType;
 import io.jaypixl.artipelagocore.questtasks.QuestTaskTypes;
 import io.jaypixl.artipelagocore.questtasks.ScopedProgressTask;
 import io.jaypixl.artipelagocore.questtasks.item.ItemFilter;
+import io.jaypixl.artipelagocore.questtasks.util.ItemStacks;
 import io.jaypixl.artipelagocore.questtasks.util.ResourceIds;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.HolderLookup;
@@ -100,9 +101,9 @@ public class FishUpItemTask extends ScopedProgressTask {
             if (stack == null || stack.isEmpty()) {
                 continue;
             }
-            String id = FishUpItemEvents.itemId(stack);
-            Collection<String> tags = mode == ItemFilter.Mode.TAG
-                    ? FishUpItemEvents.itemTagIds(stack)
+            String id = ItemStacks.itemId(stack);
+            Collection<String> tags = itemFilter.mode() == ItemFilter.Mode.TAG
+                    ? ItemStacks.itemTagIds(stack)
                     : List.of();
             if (itemFilter.matches(id, tags)) {
                 itemMatched = true;

@@ -1,6 +1,6 @@
 package io.jaypixl.artipelagocore.questtasks.trade;
 
-import net.minecraft.core.registries.BuiltInRegistries;
+import io.jaypixl.artipelagocore.questtasks.util.ItemStacks;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.ArrayList;
@@ -22,11 +22,10 @@ public final class TradeAmounts {
             if (stack == null || stack.isEmpty()) {
                 continue;
             }
-            String id = BuiltInRegistries.ITEM.getKey(stack.getItem()).toString();
-            List<String> tags = stack.getItem().builtInRegistryHolder().tags()
-                    .map(tag -> tag.location().toString())
-                    .toList();
-            amounts.add(new TradeDelta.ItemAmount(id, stack.getCount(), tags));
+            amounts.add(new TradeDelta.ItemAmount(
+                    ItemStacks.itemId(stack),
+                    stack.getCount(),
+                    ItemStacks.itemTagIds(stack)));
         }
         return amounts;
     }

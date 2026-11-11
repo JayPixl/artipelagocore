@@ -59,7 +59,7 @@ public abstract class AbstractTransactionTask extends ScopedProgressTask {
     }
 
     /** How much this task counts for one normalized trade, from its perspective. */
-    public long delta(TradeDelta.Record record, TradeDelta.Perspective perspective) {
+    public long delta(TradeDelta.Trade record, TradeDelta.Perspective perspective) {
         return TradeDelta.compute(record, counts, soldFilter, boughtFilter, perspective);
     }
 

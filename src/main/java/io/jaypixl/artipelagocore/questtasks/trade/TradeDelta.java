@@ -4,7 +4,6 @@ import io.jaypixl.artipelagocore.questtasks.item.ItemFilter;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Locale;
 
 /**
  * Pure trade-delta computation shared by the Customer and Merchant
@@ -41,10 +40,10 @@ public final class TradeDelta {
      * what left the shop, {@code bought} is what entered it, and the two coin
      * values are what the shop received and paid (gross, taxes ignored).
      */
-    public record Record(List<ItemAmount> sold, List<ItemAmount> bought,
+    public record Trade(List<ItemAmount> sold, List<ItemAmount> bought,
             long coinsReceivedByShop, long coinsPaidByShop) {
 
-        public Record {
+        public Trade {
             sold = sold == null ? List.of() : List.copyOf(sold);
             bought = bought == null ? List.of() : List.copyOf(bought);
             coinsReceivedByShop = Math.max(0L, coinsReceivedByShop);
@@ -63,22 +62,22 @@ public final class TradeDelta {
      * Amount of progress one transaction adds to a task. Zero means the task
      * does not count this trade at all.
      */
-    public static long compute(Record record, TransactionCounts counts,
+    public static long compute(Trade trade, TransactionCounts counts,
             ItemFilter soldFilter, ItemFilter boughtFilter, Perspective perspective) {
-        if (record == null || counts == null || !record.hasItems()) {
+        if (trade == null || counts == null || !trade.hasItems()) {
             return 0L;
         }
         // Both filters are conjoined qualifiers: a filled side must contain a
         // matching stack, even when the counted quantity is coins.
-        if (!qualifies(record.sold(), soldFilter) || !qualifies(record.bought(), boughtFilter)) {
+        if (!qualifies(trade.sold(), soldFilter) || !qualifies(trade.bought(), boughtFilter)) {
             return 0L;
         }
         Perspective effective = perspective == null ? Perspective.MERCHANT : perspective;
         long amount = switch (counts) {
-            case SOLD_ITEMS -> sumMatching(record.sold(), soldFilter);
-            case BOUGHT_ITEMS -> sumMatching(record.bought(), boughtFilter);
-            case COINS_RECEIVED -> receivedBy(effective, record);
-            case COINS_PAID -> paidBy(effective, record);
+            case SOLD_ITEMS -> sumMatching(trade.sold(), soldFilter);
+            case BOUGHT_ITEMS -> sumMatching(trade.bought(), boughtFilter);
+            case COINS_RECEIVED -> receivedBy(effective, trade);
+            case COINS_PAID -> paidBy(effective, trade);
         };
         return Math.max(0L, amount);
     }
@@ -106,20 +105,15 @@ public final class TradeDelta {
         return total;
     }
 
-    private static long receivedBy(Perspective perspective, Record record) {
+    private static long receivedBy(Perspective perspective, Trade trade) {
         return perspective == Perspective.MERCHANT
-                ? record.coinsReceivedByShop()
-                : record.coinsPaidByShop();
+                ? trade.coinsReceivedByShop()
+                : trade.coinsPaidByShop();
     }
 
-    private static long paidBy(Perspective perspective, Record record) {
+    private static long paidBy(Perspective perspective, Trade trade) {
         return perspective == Perspective.MERCHANT
-                ? record.coinsPaidByShop()
-                : record.coinsReceivedByShop();
-    }
-
-    /** Stable id for the perspective, used by tests and logging. */
-    static String id(Perspective perspective) {
-        return perspective.name().toLowerCase(Locale.ROOT);
+                ? trade.coinsPaidByShop()
+                : trade.coinsReceivedByShop();
     }
 }

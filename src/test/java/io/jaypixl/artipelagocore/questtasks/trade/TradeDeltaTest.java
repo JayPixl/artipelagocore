@@ -16,12 +16,12 @@ class TradeDeltaTest {
     private static final TradeDelta.ItemAmount COBBLE = new TradeDelta.ItemAmount(
             "minecraft:cobblestone", 16, List.of("minecraft:stone_bricks"));
 
-    private static TradeDelta.Record sale(TradeDelta.ItemAmount sold, long coinsReceived) {
-        return new TradeDelta.Record(List.of(sold), List.of(), coinsReceived, 0L);
+    private static TradeDelta.Trade sale(TradeDelta.ItemAmount sold, long coinsReceived) {
+        return new TradeDelta.Trade(List.of(sold), List.of(), coinsReceived, 0L);
     }
 
-    private static TradeDelta.Record purchase(TradeDelta.ItemAmount bought, long coinsPaid) {
-        return new TradeDelta.Record(List.of(), List.of(bought), 0L, coinsPaid);
+    private static TradeDelta.Trade purchase(TradeDelta.ItemAmount bought, long coinsPaid) {
+        return new TradeDelta.Trade(List.of(), List.of(bought), 0L, coinsPaid);
     }
 
     @Test
@@ -42,7 +42,7 @@ class TradeDeltaTest {
 
     @Test
     void moneyOnlyTradeNeverCounts() {
-        TradeDelta.Record moneyOnly = new TradeDelta.Record(List.of(), List.of(), 500L, 0L);
+        TradeDelta.Trade moneyOnly = new TradeDelta.Trade(List.of(), List.of(), 500L, 0L);
 
         for (TransactionCounts counts : TransactionCounts.values()) {
             assertEquals(0L, TradeDelta.compute(moneyOnly, counts,
@@ -52,7 +52,7 @@ class TradeDeltaTest {
 
     @Test
     void barterContributesToBothSides() {
-        TradeDelta.Record barter = new TradeDelta.Record(List.of(OAK), List.of(COBBLE), 0L, 0L);
+        TradeDelta.Trade barter = new TradeDelta.Trade(List.of(OAK), List.of(COBBLE), 0L, 0L);
 
         assertEquals(64L, TradeDelta.compute(barter, TransactionCounts.SOLD_ITEMS,
                 ItemFilter.any(), ItemFilter.any(), TradeDelta.Perspective.MERCHANT));
@@ -67,7 +67,7 @@ class TradeDeltaTest {
     @Test
     void coinLabelsAreInvertedBetweenCustomerAndMerchant() {
         // A sale: the shop received 300, so the customer paid 300.
-        TradeDelta.Record sale = sale(OAK, 300L);
+        TradeDelta.Trade sale = sale(OAK, 300L);
         assertEquals(300L, TradeDelta.compute(sale, TransactionCounts.COINS_RECEIVED,
                 ItemFilter.any(), ItemFilter.any(), TradeDelta.Perspective.MERCHANT));
         assertEquals(300L, TradeDelta.compute(sale, TransactionCounts.COINS_PAID,
@@ -76,7 +76,7 @@ class TradeDeltaTest {
                 ItemFilter.any(), ItemFilter.any(), TradeDelta.Perspective.MERCHANT));
 
         // A purchase: the shop paid 300, so the customer received 300.
-        TradeDelta.Record purchase = purchase(STONE, 300L);
+        TradeDelta.Trade purchase = purchase(STONE, 300L);
         assertEquals(300L, TradeDelta.compute(purchase, TransactionCounts.COINS_PAID,
                 ItemFilter.any(), ItemFilter.any(), TradeDelta.Perspective.MERCHANT));
         assertEquals(300L, TradeDelta.compute(purchase, TransactionCounts.COINS_RECEIVED,
@@ -85,7 +85,7 @@ class TradeDeltaTest {
 
     @Test
     void coinsStillRequireFilledItemFiltersToMatch() {
-        TradeDelta.Record record = sale(OAK, 300L);
+        TradeDelta.Trade record = sale(OAK, 300L);
         ItemFilter oak = ItemFilter.of(ItemFilter.Mode.ITEM, "minecraft:oak_log");
         ItemFilter stone = ItemFilter.of(ItemFilter.Mode.ITEM, "minecraft:stone");
 
@@ -97,7 +97,7 @@ class TradeDeltaTest {
 
     @Test
     void bothFilledFiltersMustMatch() {
-        TradeDelta.Record barter = new TradeDelta.Record(List.of(OAK), List.of(STONE), 0L, 0L);
+        TradeDelta.Trade barter = new TradeDelta.Trade(List.of(OAK), List.of(STONE), 0L, 0L);
         ItemFilter oak = ItemFilter.of(ItemFilter.Mode.TAG, "#minecraft:logs");
         ItemFilter stone = ItemFilter.of(ItemFilter.Mode.ITEM, "minecraft:stone");
 
@@ -110,7 +110,7 @@ class TradeDeltaTest {
 
     @Test
     void emptyTransactionFiltersMeanAny() {
-        TradeDelta.Record record = sale(OAK, 0L);
+        TradeDelta.Trade record = sale(OAK, 0L);
         ItemFilter blankItem = ItemFilter.of(ItemFilter.Mode.ITEM, "");
         ItemFilter blankTag = ItemFilter.of(ItemFilter.Mode.TAG, "");
 
@@ -120,7 +120,7 @@ class TradeDeltaTest {
 
     @Test
     void itemCountUsesTheSideFilterQuantities() {
-        TradeDelta.Record barter = new TradeDelta.Record(List.of(OAK), List.of(COBBLE), 0L, 0L);
+        TradeDelta.Trade barter = new TradeDelta.Trade(List.of(OAK), List.of(COBBLE), 0L, 0L);
         ItemFilter stoneTag = ItemFilter.of(ItemFilter.Mode.TAG, "#minecraft:stone_bricks");
 
         assertEquals(16L, TradeDelta.compute(barter, TransactionCounts.BOUGHT_ITEMS,

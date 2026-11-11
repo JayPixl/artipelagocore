@@ -72,7 +72,7 @@ public final class TraderTradeEvents {
         }
 
         long price = coinCoreValue(event.getPricePaid());
-        TradeDelta.Record record = new TradeDelta.Record(
+        TradeDelta.Trade record = new TradeDelta.Trade(
                 TradeAmounts.of(sold),
                 TradeAmounts.of(bought),
                 direction == TradeDirection.SALE ? price : 0L,
@@ -101,7 +101,7 @@ public final class TraderTradeEvents {
     }
 
     private static void creditCustomers(ServerQuestFile file, List<CustomerTransactionTask> tasks,
-            TradeDelta.Record record, ServerPlayer player, boolean playerOwned) {
+            TradeDelta.Trade record, ServerPlayer player, boolean playerOwned) {
         TeamData data = null;
         for (CustomerTransactionTask task : tasks) {
             if (!task.allowsTrader(playerOwned)) {
@@ -122,7 +122,7 @@ public final class TraderTradeEvents {
     }
 
     private static void creditMerchant(List<MerchantTransactionTask> tasks,
-            TradeDelta.Record record, UUID ownerId) {
+            TradeDelta.Trade record, UUID ownerId) {
         if (ownerId == null) {
             // Server- and team-owned shops have no player owner to credit.
             return;
