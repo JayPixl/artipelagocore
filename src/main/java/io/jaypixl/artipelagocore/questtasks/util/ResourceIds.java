@@ -12,8 +12,13 @@ import java.util.regex.Pattern;
  */
 public final class ResourceIds {
 
-    /** A namespaced id, optionally prefixed with a single {@code #} for tags. */
-    public static final Pattern PATTERN = Pattern.compile("#?[a-z0-9_.-]+:[a-z0-9_./-]+");
+    /**
+     * A namespaced id, optionally prefixed with a single {@code #} for tags.
+     * The whole value is optional and surrounding whitespace is allowed, so a
+     * blank filter field validates successfully and means "any".
+     */
+    public static final Pattern PATTERN = Pattern.compile(
+            "\\s*(#?[a-z0-9_.-]+:[a-z0-9_./-]+)?\\s*");
 
     private ResourceIds() {
     }
