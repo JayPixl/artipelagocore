@@ -3,7 +3,7 @@
 ## Project
 
 Artipelago Core (`artipelago`) — NeoForge 1.21.1 mod for the Artipelago Cobblemon server.
-Version lives in `build.gradle.kts` (`version = "0.5.0"`). See `CONTEXT.md` for canonical terms.
+Version lives in `build.gradle.kts` (`version = "0.6.0"`). See `CONTEXT.md` for canonical terms.
 
 ## Compatibility
 
@@ -22,7 +22,7 @@ Version lives in `build.gradle.kts` (`version = "0.5.0"`). See `CONTEXT.md` for 
 - `events/effect/` — `EventEffect` (typed JSON bonus, shape varies per type; see `schemas.txt`)
 - `eggmoves/` — `EggMovesConfig(Manager)` (`config/artipelago/eggmoves.json`), `EggMoveTeaching` (pure eligibility + timing), `PastureTeachingService` (slow-tick pasture teach), `EggMovesCommands` (`/eggmoves reload`), `EggMovesModuleEvents`
 - `regionmarket/` — `RegionMarketCommands` (`/regionmarket add|remove|list|buy|info|claimstarterhousing`, `/atm`), `RegionMarketSavedData`, `RegionMarketEntry`, `RegionMarketEvents`
-- `questtasks/` — FTB Quests task types this mod registers (`QuestTaskTypes`), their event listeners, and pure filter logic (`questtasks/block/` holds Break Block)
+- `questtasks/` — FTB Quests task types this mod registers (`QuestTaskTypes`), their event listeners, and pure filter/trade logic. `block/`, `fish/`, `trade/`, `item/`, `util/` and `mixin/` hold the five task types, shared filters and the `/lctrade` patch.
 - `yawp/` + `yawp/mixin/` — compat fixes (visual sync, hoe-till, fluid placement guard)
 - `pokecapsuleintegration/mixin/` — occupied-pokéball placement patch for Cobblemon Occupied Pokéballs (upstream mod, `com.pokecapsule`)
 - `item/` — `ModItems` crafting ingredients (raw chunks, shards)
@@ -41,7 +41,7 @@ Effect schema source of truth: `schemas.txt` + `EventEffect.java`. Date format f
 
 ## Build and verify
 
-- `./gradlew test` — pure logic only (scheduler windows, `ScheduledEvent` validation). No `src/test/` exists yet; add JUnit 5 tests for anything that does not need a Minecraft client.
+- `./gradlew test` — pure logic only (scheduler windows, `ScheduledEvent` validation, filters, trade deltas). JUnit 5 tests live under `src/test/java/`; add tests for anything that does not need a Minecraft client.
 - `./gradlew build` — full compile. Requires Java 21 + Gradle caches / CurseMaven access.
 - Anything needing Cobblemon / server / client (spawns, XP, loot, commands, GUIs, mixins) is manual: prepare a checklist with exact commands (e.g. `/events start weekend 120`, `/regionmarket info`) and expected observations.
 
