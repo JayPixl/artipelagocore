@@ -53,6 +53,20 @@ versionRange = "[2101.1.36,)"
 ordering = "AFTER"
 side = "BOTH"
 
+[[dependencies.artipelago]]
+modId = "lightmanscurrency"
+mandatory = true
+versionRange = "[1.21-2.3.0.5,)"
+ordering = "AFTER"
+side = "BOTH"
+
+[[dependencies.artipelago]]
+modId = "tide"
+mandatory = true
+versionRange = "[2.1.1,2.2)"
+ordering = "AFTER"
+side = "BOTH"
+
 [[mixins]]
 config = "mixins.yawp.json"
 
@@ -61,3 +75,6 @@ config = "mixins.pokecapsuleintegration.json"
 
 [[mixins]]
 config = "mixins.questtracking.json"
+
+[[mixins]]
+config = "mixins.questtasks.json"

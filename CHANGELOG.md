@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.6.0] - 2026-11-12
+
+- Added five FTB Quests task types for the Artipelago quest book:
+  - **Fish Up Item** — count catches of a specific item or item tag, optionally only in a biome or biome tag. Vanilla fishing and Tide 2 fishing both count.
+  - **Break Block** — count blocks broken by hand or tool, filtered by block id or block tag. Creative, fake-player and cancelled breaks do not count.
+  - **Customer Transaction** — reward customers for buying from or selling to player shops, counted in items or coins, with optional sold/bought item filters and a server-owned shop toggle.
+  - **Merchant Transaction** — credit a shop owner when customers trade at any of their shops, including while the owner is offline.
+  - **Trade Item** — count items given or received through `/lctrade` for both participants.
+- All five task types respect Tracking Scope (Solo, Team and Global), including Global pooling and offline owner credit.
+- Shop tasks ignore money-only trades, self-trades and non-item traders such as gacha machines, slot machines, paygates and command traders.
+- A blank item, block or tag filter counts any item or block; a malformed non-blank value never matches.
+- Added Lightman's Currency (1.21-2.3.0.5 or newer) and Tide 2 (2.1.x, 2.1.1 or newer) as required dependencies.
+
 ## [0.5.0] - 2026-10-26
 
 - Updated for Cobblemon 1.8.3. The mod now requires Cobblemon 1.8.x and no longer loads on 1.7.x.

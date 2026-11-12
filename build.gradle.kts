@@ -7,7 +7,7 @@ plugins {
 
 
 group = "io.github.jaypixl"
-version = "0.5.0"
+version = "0.6.0"
 
 architectury {
     platformSetupLoomIde()
@@ -45,6 +45,7 @@ repositories {
     maven("https://maven.neoforged.net/releases")
     maven("https://maven.ftb.dev/releases")
     maven("https://cursemaven.com")
+    maven("https://api.modrinth.com/maven")
 }
 
 dependencies {
@@ -63,6 +64,12 @@ dependencies {
     modImplementation("curse.maven:yawp-663276:8034329")
     modImplementation("curse.maven:lightmans-currency-472521:8366260")
     modImplementation("curse.maven:cobblemon-occupied-pokeballs-1508508:9148916")
+
+    // Tide 2 is a declared mandatory dependency; quest-task detection uses the
+    // shared ItemFishedEvent, but the operator's server runs Tide.
+    modImplementation("maven.modrinth:tide:1ki6UyqV")
+    // Tide's required config library, dev runtime only.
+    modRuntimeOnly("curse.maven:cloth-config-348521:5729127")
 
     modImplementation("dev.ftb.mods:ftb-quests-neoforge:2101.1.36")
     modImplementation("dev.ftb.mods:ftb-library-neoforge:2101.1.36")

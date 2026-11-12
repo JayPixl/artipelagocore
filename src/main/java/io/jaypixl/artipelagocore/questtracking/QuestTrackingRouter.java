@@ -14,8 +14,11 @@ import dev.architectury.networking.NetworkManager;
 import dev.ftb.mods.ftbteams.api.FTBTeamsAPI;
 import dev.ftb.mods.ftbteams.api.Team;
 import io.jaypixl.artipelagocore.questtracking.mixin.TeamDataProgressAccessor;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
+import net.neoforged.neoforge.server.ServerLifecycleHooks;
 import org.slf4j.Logger;
 
 import java.util.ArrayList;
@@ -85,8 +88,35 @@ public final class QuestTrackingRouter {
     public static TeamData resolveStore(Task task, TeamData current, ServerPlayer player) {
         return switch (effectiveScope(task)) {
             case TEAM -> current;
-            case SOLO -> personalStore(player).orElse(current);
-            case GLOBAL -> globalStore(player).orElse(current);
+            case SOLO -> personalStore(player.getUUID()).orElse(current);
+            case GLOBAL -> globalStore(player.createCommandSourceStack()).orElse(current);
+        };
+    }
+
+    /**
+     * Store resolution for progress credited to a player who may not be online,
+     * such as a Merchant Transaction owner whose shop a customer just used.
+     *
+     * <p>{@link #resolveStore} is handed the submitting player's store by FTB and
+     * only has to choose between it, a personal store and the pooled store. An
+     * owner credit has no such store — the store the event carries belongs to the
+     * executor's team — so Team resolves the owner's effective party team by UUID
+     * and Solo resolves their personal team. Empty means write nothing: there is
+     * no safe fallback, because falling back to the executor's team would credit
+     * the wrong player's quest.
+     */
+    public static Optional<TeamData> resolveStoreForOwner(Task task, UUID ownerId) {
+        if (task == null || ownerId == null) {
+            return Optional.empty();
+        }
+        Optional<ServerQuestFile> file = questFile();
+        if (file.isEmpty()) {
+            return Optional.empty();
+        }
+        return switch (effectiveScope(task)) {
+            case TEAM -> effectiveTeamStore(file.get(), ownerId);
+            case SOLO -> personalStore(ownerId);
+            case GLOBAL -> globalStore(currentServerSource());
         };
     }
 
@@ -709,8 +739,8 @@ public final class QuestTrackingRouter {
     public static TeamData resolveClaimStore(Quest quest, TeamData current, ServerPlayer player) {
         return switch (questScope(quest)) {
             case TEAM -> current;
-            case SOLO -> personalStore(player).orElse(current);
-            case GLOBAL -> globalStore(player).orElse(current);
+            case SOLO -> personalStore(player.getUUID()).orElse(current);
+            case GLOBAL -> globalStore(player.createCommandSourceStack()).orElse(current);
         };
     }
 
@@ -806,7 +836,7 @@ public final class QuestTrackingRouter {
         return Optional.ofNullable(file.getNullableTeamData(player.getUUID()));
     }
 
-    private static Optional<TeamData> personalStore(Player player) {
+    private static Optional<TeamData> personalStore(UUID playerId) {
         if (!FTBTeamsAPI.api().isManagerLoaded()) {
             LOGGER.warn("[artipelago] FTB Teams manager not loaded; keeping native progress store");
             return Optional.empty();
@@ -815,15 +845,43 @@ public final class QuestTrackingRouter {
         if (file.isEmpty()) {
             return Optional.empty();
         }
-        Optional<Team> personal = FTBTeamsAPI.api().getManager().getPlayerTeamForPlayerID(player.getUUID());
+        Optional<Team> personal = FTBTeamsAPI.api().getManager().getPlayerTeamForPlayerID(playerId);
         if (personal.isEmpty()) {
-            LOGGER.warn("[artipelago] No personal team for {}; keeping native progress store", player.getScoreboardName());
+            LOGGER.warn("[artipelago] No personal team for {}; keeping native progress store", playerId);
             return Optional.empty();
         }
         return Optional.of(file.get().getOrCreateTeamData(personal.get()));
     }
 
-    private static Optional<TeamData> globalStore(ServerPlayer player) {
+    /**
+     * The owner's effective party team, or their personal team when they are in
+     * no party — the same store FTB would hand a submit from that player.
+     */
+    private static Optional<TeamData> effectiveTeamStore(ServerQuestFile file, UUID playerId) {
+        if (!FTBTeamsAPI.api().isManagerLoaded()) {
+            LOGGER.warn("[artipelago] FTB Teams manager not loaded; skipping owner progress credit");
+            return Optional.empty();
+        }
+        return FTBTeamsAPI.api().getManager().getTeamForPlayerID(playerId)
+                .map(file::getOrCreateTeamData);
+    }
+
+    /**
+     * Command source for the first Global team creation, or null when no server
+     * is running. Callers only need it when the team does not exist yet.
+     */
+    private static CommandSourceStack currentServerSource() {
+        MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
+        return server == null ? null : server.createCommandSourceStack();
+    }
+
+    /**
+     * The fixed Global store. The command source is only used to create the
+     * server team on first use, so an already-created Global store resolves
+     * without a running player — that is what lets an offline shop owner credit
+     * a Global task.
+     */
+    private static Optional<TeamData> globalStore(CommandSourceStack source) {
         if (!FTBTeamsAPI.api().isManagerLoaded()) {
             LOGGER.warn("[artipelago] FTB Teams manager not loaded; keeping native progress store");
             return Optional.empty();
@@ -832,22 +890,25 @@ public final class QuestTrackingRouter {
         if (file.isEmpty()) {
             return Optional.empty();
         }
-        Team team = FTBTeamsAPI.api().getManager().getTeamByID(GLOBAL_TEAM_ID).orElseGet(() -> {
-            try {
-                return FTBTeamsAPI.api().getManager().createServerTeam(
-                        player.createCommandSourceStack(),
-                        "Artipelago Global",
-                        "Server-wide quest progress",
-                        null,
-                        GLOBAL_TEAM_ID);
-            } catch (Exception e) {
-                LOGGER.warn("[artipelago] Could not create Global server team; keeping native progress store", e);
-                return null;
-            }
-        });
-        if (team == null) {
+        Optional<Team> existing = FTBTeamsAPI.api().getManager().getTeamByID(GLOBAL_TEAM_ID);
+        if (existing.isPresent()) {
+            return Optional.of(file.get().getOrCreateTeamData(existing.get()));
+        }
+        if (source == null) {
+            LOGGER.warn("[artipelago] Global team missing and no server command source; keeping native progress store");
             return Optional.empty();
         }
-        return Optional.of(file.get().getOrCreateTeamData(team));
+        try {
+            Team team = FTBTeamsAPI.api().getManager().createServerTeam(
+                    source,
+                    "Artipelago Global",
+                    "Server-wide quest progress",
+                    null,
+                    GLOBAL_TEAM_ID);
+            return Optional.of(file.get().getOrCreateTeamData(team));
+        } catch (Exception e) {
+            LOGGER.warn("[artipelago] Could not create Global server team; keeping native progress store", e);
+            return Optional.empty();
+        }
     }
 }
