@@ -65,19 +65,11 @@ public class BlockBreakTask extends ScopedProgressTask {
         return amount;
     }
 
-    public boolean hasFilter() {
-        return !filter.isEmpty();
-    }
-
-    /**
-     * @param blockTags supplies the broken block's tag ids; only consulted for a
-     *                  tag filter, so a plain id filter never pays for the lookup
-     */
     public boolean matches(String blockId, Supplier<Collection<String>> blockTags) {
-        if (filter.isEmpty()) {
-            return false;
-        }
-        return filter.matches(blockId, filter.mode() == BlockFilter.Mode.TAG ? blockTags.get() : List.of());
+        Collection<String> tags = filter.mode() == BlockFilter.Mode.TAG && !filter.isEmpty()
+                ? blockTags.get()
+                : List.of();
+        return filter.matches(blockId, tags);
     }
 
     private void refreshFilter() {

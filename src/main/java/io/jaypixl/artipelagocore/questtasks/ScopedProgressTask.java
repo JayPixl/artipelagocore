@@ -1,11 +1,14 @@
 package io.jaypixl.artipelagocore.questtasks;
 
+import com.mojang.logging.LogUtils;
 import dev.ftb.mods.ftbquests.quest.Quest;
 import dev.ftb.mods.ftbquests.quest.TeamData;
 import dev.ftb.mods.ftbquests.quest.task.Task;
 import io.jaypixl.artipelagocore.questtracking.QuestTrackingRouter;
 import net.minecraft.server.level.ServerPlayer;
+import org.slf4j.Logger;
 
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -18,6 +21,9 @@ import java.util.UUID;
  * tasks apply — identical for every type this mod adds.
  */
 public abstract class ScopedProgressTask extends Task {
+
+    private static final Logger LOGGER = LogUtils.getLogger();
+    private static final boolean DEBUG = Boolean.getBoolean("artipelago.questtasks.debug");
 
     protected ScopedProgressTask(long id, Quest quest) {
         super(id, quest);
@@ -42,19 +48,28 @@ public abstract class ScopedProgressTask extends Task {
     }
 
     /**
-     * Adds {@code delta} progress on the store belonging to {@code ownerId},
-     * who may be offline. Used only by owner-credited tasks (Merchant
-     * Transaction): the store cannot come from the event because the event's
-     * store belongs to the customer. No-ops when the owner has no resolvable
-     * store, which is the correct failure mode — falling back to the executor's
-     * store would credit the wrong player.
+     * Adds {@code delta} progress on the store belonging to {@code playerId},
+     * which may be offline. Used by owner credit (Merchant Transaction) and by
+     * customer credit: both resolve the target by UUID instead of trusting the
+     * event's team store. No-ops when no store resolves, which is the correct
+     * failure mode — falling back to the executor's store would credit the
+     * wrong player.
      */
-    protected void submitOwnerProgress(UUID ownerId, long delta) {
-        if (ownerId == null || delta <= 0L) {
+    protected void submitProgressForPlayer(UUID playerId, long delta) {
+        if (playerId == null || delta <= 0L) {
             return;
         }
-        QuestTrackingRouter.resolveStoreForOwner(this, ownerId).ifPresent(data -> {
-            if (checkTaskSequence(data)) {
+        Optional<TeamData> resolved = QuestTrackingRouter.resolveStoreForOwner(this, playerId);
+        if (DEBUG) {
+            LOGGER.info("[artipelago] credit task={} player={} delta={} store={}",
+                    getId(), playerId, delta, resolved.map(TeamData::getTeamId).orElse(null));
+        }
+        resolved.ifPresent(data -> {
+            boolean sequenced = checkTaskSequence(data);
+            if (DEBUG) {
+                LOGGER.info("[artipelago] credit task={} sequenceGate={}", getId(), sequenced);
+            }
+            if (sequenced) {
                 data.addProgress(this, delta);
             }
         });

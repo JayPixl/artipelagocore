@@ -68,7 +68,7 @@ public final class BlockBreakEvents {
         LazyBlockTags blockTags = new LazyBlockTags(state);
         TeamData data = null;
         for (BlockBreakTask task : tasks) {
-            if (!task.hasFilter() || !task.matches(blockId, blockTags)) {
+            if (!task.matches(blockId, blockTags)) {
                 continue;
             }
             if (data == null) {

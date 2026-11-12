@@ -29,6 +29,6 @@ public class MerchantTransactionTask extends AbstractTransactionTask {
 
     /** Adds owner credit on the owner's store, creating it if they are offline. */
     public void submitOwnerTrade(UUID ownerId, long delta) {
-        submitOwnerProgress(ownerId, delta);
+        submitProgressForPlayer(ownerId, delta);
     }
 }

@@ -89,17 +89,22 @@ public class FishUpItemTask extends ScopedProgressTask {
 
     /**
      * True when the catch contains a matching item and the bobber's biome (if
-     * the filter is enabled) matches. A blank filter never matches, so an
-     * unfinished task cannot complete on an arbitrary catch.
+     * the filter is enabled) matches. A blank item filter accepts every catch;
+     * a malformed one never matches.
      */
     public boolean matches(List<ItemStack> drops, Supplier<BiomeContext> biomeContext) {
-        if (drops == null || itemFilter.isBlank()) {
+        if (drops == null || itemFilter.isMalformed()) {
             return false;
         }
+        boolean unconstrained = itemFilter.isUnconstrained();
         boolean itemMatched = false;
         for (ItemStack stack : drops) {
             if (stack == null || stack.isEmpty()) {
                 continue;
+            }
+            if (unconstrained) {
+                itemMatched = true;
+                break;
             }
             String id = ItemStacks.itemId(stack);
             Collection<String> tags = itemFilter.mode() == ItemFilter.Mode.TAG

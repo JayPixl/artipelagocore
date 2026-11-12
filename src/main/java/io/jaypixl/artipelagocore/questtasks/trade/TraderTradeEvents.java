@@ -1,7 +1,7 @@
 package io.jaypixl.artipelagocore.questtasks.trade;
 
+import com.mojang.logging.LogUtils;
 import dev.ftb.mods.ftbquests.quest.ServerQuestFile;
-import dev.ftb.mods.ftbquests.quest.TeamData;
 import io.github.lightman314.lightmanscurrency.api.events.TradeEvent;
 import io.github.lightman314.lightmanscurrency.api.money.types.CurrencyType;
 import io.github.lightman314.lightmanscurrency.api.money.types.builtin.CoinCurrencyType;
@@ -17,11 +17,13 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.SubscribeEvent;
+import org.slf4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+
 /**
  * Normalizes one completed Lightman's Currency trader trade and fans progress
  * out to the Customer and Merchant Transaction tasks.
@@ -34,6 +36,9 @@ import java.util.UUID;
  * Money-only trades are discarded later by {@link TradeDelta}.
  */
 public final class TraderTradeEvents {
+
+    private static final Logger LOGGER = LogUtils.getLogger();
+    private static final boolean DEBUG = Boolean.getBoolean("artipelago.questtasks.debug");
 
     private TraderTradeEvents() {
     }
@@ -99,28 +104,26 @@ public final class TraderTradeEvents {
             return;
         }
 
-        creditCustomers(file, customerTasks, record, player, ownership);
+        creditCustomers(customerTasks, record, player.getUUID(), ownership);
         creditMerchant(merchantTasks, record, ownerId, ownership);
+        if (DEBUG) {
+            LOGGER.info("[artipelago] post-trade customer={} direction={} ownership={} sold={} bought={} price={} customerTasks={} merchantTasks={}",
+                    player.getUUID(), direction, ownership, record.sold().size(), record.bought().size(),
+                    price, customerTasks.size(), merchantTasks.size());
+        }
     }
 
-    private static void creditCustomers(ServerQuestFile file, List<CustomerTransactionTask> tasks,
-            TradeDelta.Trade record, ServerPlayer player, TraderOwnership ownership) {
-        TeamData data = null;
+    private static void creditCustomers(List<CustomerTransactionTask> tasks,
+            TradeDelta.Trade record, UUID customerId, TraderOwnership ownership) {
         for (CustomerTransactionTask task : tasks) {
-            if (!task.allowsTrader(ownership)) {
-                continue;
+            boolean allows = task.allowsTrader(ownership);
+            long delta = allows ? task.delta(record, TradeDelta.Perspective.CUSTOMER) : 0L;
+            if (DEBUG) {
+                LOGGER.info("[artipelago] customer task {} allows={} delta={}", task.getId(), allows, delta);
             }
-            long delta = task.delta(record, TradeDelta.Perspective.CUSTOMER);
-            if (delta <= 0L) {
-                continue;
+            if (delta > 0L) {
+                task.submitTradeFor(customerId, delta);
             }
-            if (data == null) {
-                data = file.getTeamData(player).orElse(null);
-                if (data == null) {
-                    return;
-                }
-            }
-            task.submitTrade(data, player, delta);
         }
     }
 

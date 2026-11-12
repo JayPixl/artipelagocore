@@ -5,16 +5,16 @@ import dev.ftb.mods.ftblibrary.config.EnumConfig;
 import dev.ftb.mods.ftblibrary.config.NameMap;
 import dev.ftb.mods.ftblibrary.config.StringConfig;
 import dev.ftb.mods.ftbquests.quest.Quest;
-import dev.ftb.mods.ftbquests.quest.TeamData;
 import io.jaypixl.artipelagocore.questtasks.ScopedProgressTask;
 import io.jaypixl.artipelagocore.questtasks.item.ItemFilter;
 import io.jaypixl.artipelagocore.questtasks.util.ResourceIds;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
+
+import java.util.UUID;
 
 /**
  * Shared configuration, serialization and counting for the two shop
@@ -63,8 +63,9 @@ public abstract class AbstractTransactionTask extends ScopedProgressTask {
         return TradeDelta.compute(record, counts, soldFilter, boughtFilter, perspective);
     }
 
-    public void submitTrade(TeamData data, ServerPlayer player, long delta) {
-        submitProgress(data, player, delta);
+    /** Credits a transaction participant resolved by UUID (customer or owner). */
+    public void submitTradeFor(UUID playerId, long delta) {
+        submitProgressForPlayer(playerId, delta);
     }
 
     private void refreshFilters() {

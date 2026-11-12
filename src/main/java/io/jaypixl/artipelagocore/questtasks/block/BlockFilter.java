@@ -7,12 +7,14 @@ import java.util.Locale;
 import java.util.regex.Pattern;
 
 /**
- * What a Break Block task counts: exactly one block id or one block tag.
+ * What a Break Block task counts: any block, exactly one block id, or one
+ * block tag.
  *
- * <p>Pure by design — the caller supplies the broken block's id and the tag ids
- * that contain it, so the matching rules stay unit testable without Minecraft
- * or FTB types. A filter is either valid or empty, and an empty filter never
- * matches: an unfinished task must not complete on any block break.
+ * <p>Pure by design — the caller supplies the broken block's id and the tag
+ * ids that contain it, so the matching rules stay unit testable without
+ * Minecraft or FTB types. A blank target matches every block; a non-blank but
+ * malformed target is a typo and never matches, so a bad id fails closed
+ * instead of silently counting everything.
  */
 public final class BlockFilter {
 
@@ -44,33 +46,34 @@ public final class BlockFilter {
      */
     public static final Pattern CONFIG_PATTERN = ResourceIds.PATTERN;
 
-    private static final BlockFilter NONE = new BlockFilter(Mode.BLOCK, "");
+    private static final BlockFilter ANY = new BlockFilter(Mode.BLOCK, "", false);
 
     private final Mode mode;
     private final String target;
+    private final boolean malformed;
 
-    private BlockFilter(Mode mode, String target) {
+    private BlockFilter(Mode mode, String target, boolean malformed) {
         this.mode = mode;
         this.target = target;
+        this.malformed = malformed;
     }
 
-    /** The never-matching filter used for blank, malformed or absent configuration. */
+    /** The filter used for a blank configuration: it matches every block. */
     public static BlockFilter none() {
-        return NONE;
+        return ANY;
     }
 
     /**
      * Builds a filter from a configured value, stripping whitespace and one
-     * leading {@code #}. Anything that is not a namespaced id collapses to
-     * {@link #none()} rather than to a filter that silently never matches
-     * through a typo.
+     * leading {@code #}. A blank or {@code #}-only value means "any block"; a
+     * non-blank value that does not normalize is malformed and never matches.
      */
     public static BlockFilter of(Mode mode, String raw) {
-        return new BlockFilter(mode == null ? Mode.BLOCK : mode, normalize(raw));
-    }
-
-    private static String normalize(String raw) {
-        return ResourceIds.normalize(raw);
+        Mode effective = mode == null ? Mode.BLOCK : mode;
+        String trimmed = raw == null ? "" : raw.trim();
+        boolean blankInput = trimmed.isEmpty() || trimmed.equals("#");
+        String normalized = ResourceIds.normalize(raw);
+        return new BlockFilter(effective, normalized, !blankInput && normalized.isEmpty());
     }
 
     public Mode mode() {
@@ -81,8 +84,14 @@ public final class BlockFilter {
         return target;
     }
 
+    /** True when no target is configured (blank or malformed). */
     public boolean isEmpty() {
         return target.isEmpty();
+    }
+
+    /** True when the configured target is non-blank but failed id validation. */
+    public boolean isMalformed() {
+        return malformed;
     }
 
     /**
@@ -90,7 +99,13 @@ public final class BlockFilter {
      * @param blockTags ids of the block tags containing it, possibly empty
      */
     public boolean matches(String blockId, Collection<String> blockTags) {
-        if (isEmpty() || blockId == null) {
+        if (malformed) {
+            return false;
+        }
+        if (target.isEmpty()) {
+            return true;
+        }
+        if (blockId == null) {
             return false;
         }
         if (mode == Mode.TAG) {

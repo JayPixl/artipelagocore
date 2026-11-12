@@ -46,7 +46,7 @@ public class CustomerTransactionTask extends AbstractTransactionTask {
      * always count for the customer.
      */
     public boolean allowsTrader(TraderOwnership ownership) {
-        return ownership != TraderOwnership.SERVER || allowServerOwned;
+        return ownership.countsForCustomer(allowServerOwned);
     }
 
     @Override

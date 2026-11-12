@@ -13,5 +13,14 @@ public enum TraderOwnership {
     TEAM,
 
     /** The server (admin shop, fake owner or no owner). Governed by the task's toggle. */
-    SERVER
+    SERVER;
+
+    /**
+     * Whether a customer trade at this kind of trader counts. Only
+     * {@link #SERVER} is governed by the allow-server-owned toggle; player- and
+     * team-owned shops always count for the customer.
+     */
+    public boolean countsForCustomer(boolean allowServerOwned) {
+        return this != SERVER || allowServerOwned;
+    }
 }

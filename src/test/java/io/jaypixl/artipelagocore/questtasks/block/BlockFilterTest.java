@@ -72,10 +72,21 @@ class BlockFilterTest {
     }
 
     @Test
-    void emptyFilterNeverMatches() {
-        assertFalse(BlockFilter.none().matches("minecraft:oak_log", OAK_LOG_TAGS));
-        assertFalse(BlockFilter.none().matches("", List.of("")));
-        assertFalse(BlockFilter.of(BlockFilter.Mode.BLOCK, "").matches("minecraft:oak_log", OAK_LOG_TAGS));
+    void emptyFilterMatchesAnyBlock() {
+        assertTrue(BlockFilter.none().matches("minecraft:oak_log", OAK_LOG_TAGS));
+        assertTrue(BlockFilter.of(BlockFilter.Mode.BLOCK, "").matches("minecraft:stone", List.of()));
+        assertTrue(BlockFilter.of(BlockFilter.Mode.TAG, "").matches("minecraft:stone", List.of()));
+        assertTrue(BlockFilter.of(BlockFilter.Mode.BLOCK, "#").matches("minecraft:stone", List.of()));
+    }
+
+    @Test
+    void malformedFilterNeverMatches() {
+        BlockFilter malformed = BlockFilter.of(BlockFilter.Mode.BLOCK, "oak_log");
+
+        assertTrue(malformed.isMalformed());
+        assertTrue(malformed.isEmpty());
+        assertFalse(malformed.matches("minecraft:oak_log", OAK_LOG_TAGS));
+        assertFalse(BlockFilter.of(BlockFilter.Mode.TAG, "minecraft:logs#").matches("minecraft:oak_log", OAK_LOG_TAGS));
     }
 
     @Test
